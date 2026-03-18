@@ -1,6 +1,6 @@
 @import "tailwindcss";
-/* Google Fonts - Poppins para títulos, Inter para corpo */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+/* Retro 90s Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Pixelify+Sans:wght@400;500;600;700&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -44,75 +44,75 @@
 }
 
 :root {
-  /* Minimalismo Moderno com Acentos Cibernéticos */
-  --primary: #0F3A7D; /* Azul profundo */
+  /* 90s Retro Internet Theme */
+  --primary: #FF00FF; /* Hot magenta */
   --primary-foreground: #FFFFFF;
-  --sidebar-primary: #0F3A7D;
+  --sidebar-primary: #FF00FF;
   --sidebar-primary-foreground: #FFFFFF;
-  --chart-1: #10B981; /* Verde menta */
-  --chart-2: #0F3A7D;
-  --chart-3: #6B7280;
-  --chart-4: #1F2937;
-  --chart-5: #111827;
-  --radius: 0.5rem;
-  --background: #FFFFFF;
-  --foreground: #1A1A1A;
-  --card: #FFFFFF;
-  --card-foreground: #1A1A1A;
-  --popover: #FFFFFF;
-  --popover-foreground: #1A1A1A;
-  --secondary: #F3F4F6;
-  --secondary-foreground: #374151;
-  --muted: #E5E7EB;
-  --muted-foreground: #6B7280;
-  --accent: #10B981;
+  --chart-1: #00FF00; /* Neon green */
+  --chart-2: #FF00FF;
+  --chart-3: #00FFFF;
+  --chart-4: #FFFF00;
+  --chart-5: #FF6600;
+  --radius: 0px;
+  --background: #000080; /* Classic navy blue */
+  --foreground: #00FF00; /* Green terminal text */
+  --card: #000066;
+  --card-foreground: #00FF00;
+  --popover: #000066;
+  --popover-foreground: #00FF00;
+  --secondary: #000044;
+  --secondary-foreground: #00FFFF;
+  --muted: #000044;
+  --muted-foreground: #00CCCC;
+  --accent: #FF00FF;
   --accent-foreground: #FFFFFF;
-  --destructive: #EF4444;
+  --destructive: #FF0000;
   --destructive-foreground: #FFFFFF;
-  --border: #E5E7EB;
-  --input: #F9FAFB;
-  --ring: #0F3A7D;
-  --sidebar: #FFFFFF;
-  --sidebar-foreground: #1A1A1A;
-  --sidebar-accent: #F3F4F6;
-  --sidebar-accent-foreground: #0F3A7D;
-  --sidebar-border: #E5E7EB;
-  --sidebar-ring: #0F3A7D;
+  --border: #00FFFF;
+  --input: #000033;
+  --ring: #FF00FF;
+  --sidebar: #000066;
+  --sidebar-foreground: #00FF00;
+  --sidebar-accent: #000044;
+  --sidebar-accent-foreground: #FF00FF;
+  --sidebar-border: #00FFFF;
+  --sidebar-ring: #FF00FF;
 }
 
 .dark {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-500);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.85 0.005 65);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.85 0.005 65);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.85 0.005 65);
-  --secondary: oklch(0.24 0.006 286.033);
-  --secondary-foreground: oklch(0.7 0.005 65);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground:  oklch(0.92 0.005 65);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.488 0.243 264.376);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.85 0.005 65);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground:  oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.488 0.243 264.376);
+  --primary: #FF00FF;
+  --primary-foreground: #FFFFFF;
+  --sidebar-primary: #FF00FF;
+  --sidebar-primary-foreground: #FFFFFF;
+  --background: #000080;
+  --foreground: #00FF00;
+  --card: #000066;
+  --card-foreground: #00FF00;
+  --popover: #000066;
+  --popover-foreground: #00FF00;
+  --secondary: #000044;
+  --secondary-foreground: #00FFFF;
+  --muted: #000044;
+  --muted-foreground: #00CCCC;
+  --accent: #FF00FF;
+  --accent-foreground: #FFFFFF;
+  --destructive: #FF0000;
+  --destructive-foreground: #FFFFFF;
+  --border: #00FFFF;
+  --input: #000033;
+  --ring: #FF00FF;
+  --chart-1: #00FF00;
+  --chart-2: #FF00FF;
+  --chart-3: #00FFFF;
+  --chart-4: #FFFF00;
+  --chart-5: #FF6600;
+  --sidebar: #000066;
+  --sidebar-foreground: #00FF00;
+  --sidebar-accent: #000044;
+  --sidebar-accent-foreground: #FF00FF;
+  --sidebar-border: #00FFFF;
+  --sidebar-ring: #FF00FF;
 }
 
 @import "tailwindcss";
@@ -147,27 +147,32 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #000080;
+    color: #00FF00;
+    font-family: 'VT323', 'Courier New', monospace;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M0 0 L12 12 L6 12 L9 16 L7 16 L4 12 L0 16 Z' fill='%2300FF00'/%3E%3C/svg%3E"), auto;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-family: 'Press Start 2P', cursive;
+    letter-spacing: 0.05em;
   }
   
   h1 {
-    @apply text-4xl font-bold;
+    font-size: 1.5rem;
+    line-height: 2;
   }
   
   h2 {
-    @apply text-2xl font-bold;
+    font-size: 1.1rem;
+    line-height: 1.8;
   }
   
   h3 {
-    @apply text-xl font-bold;
+    font-size: 0.9rem;
+    line-height: 1.6;
   }
+
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
   [type="button"]:not(:disabled),
@@ -179,27 +184,28 @@
   input[type="radio"]:not(:disabled) {
     @apply cursor-pointer;
   }
+
+  /* Scrollbar retro */
+  ::-webkit-scrollbar {
+    width: 16px;
+    background: #000044;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #00FFFF;
+    border: 2px solid #000044;
+  }
+  ::-webkit-scrollbar-track {
+    background: #000044;
+    border: 1px solid #00FFFF;
+  }
 }
 
 @layer components {
-  /**
-   * Custom container utility that centers content and adds responsive padding.
-   *
-   * This overrides Tailwind's default container behavior to:
-   * - Auto-center content (mx-auto)
-   * - Add responsive horizontal padding
-   * - Set max-width for large screens
-   *
-   * Usage: <div className="container">...</div>
-   *
-   * For custom widths, use max-w-* utilities directly:
-   * <div className="max-w-6xl mx-auto px-4">...</div>
-   */
   .container {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1rem; /* 16px - mobile padding */
+    padding-left: 1rem;
     padding-right: 1rem;
   }
 
@@ -210,16 +216,277 @@
 
   @media (min-width: 640px) {
     .container {
-      padding-left: 1.5rem; /* 24px - tablet padding */
+      padding-left: 1.5rem;
       padding-right: 1.5rem;
     }
   }
 
   @media (min-width: 1024px) {
     .container {
-      padding-left: 2rem; /* 32px - desktop padding */
+      padding-left: 2rem;
       padding-right: 2rem;
-      max-width: 1280px; /* Standard content width */
+      max-width: 1280px;
     }
   }
+}
+
+/* ==========================================
+   90s RETRO ANIMATIONS & EFFECTS
+   ========================================== */
+
+/* Marquee scroll animation */
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  animation: marquee 15s linear infinite;
+}
+
+/* Classic blink effect */
+@keyframes retro-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.animate-retro-blink {
+  animation: retro-blink 1s step-end infinite;
+}
+
+/* Rainbow text cycling */
+@keyframes rainbow {
+  0% { color: #FF0000; }
+  14% { color: #FF7F00; }
+  28% { color: #FFFF00; }
+  42% { color: #00FF00; }
+  57% { color: #0000FF; }
+  71% { color: #4B0082; }
+  85% { color: #9400D3; }
+  100% { color: #FF0000; }
+}
+
+.animate-rainbow {
+  animation: rainbow 3s linear infinite;
+}
+
+/* Glowing neon text */
+@keyframes neon-glow {
+  0%, 100% {
+    text-shadow: 0 0 4px #FF00FF, 0 0 11px #FF00FF, 0 0 19px #FF00FF, 0 0 40px #FF00FF;
+  }
+  50% {
+    text-shadow: 0 0 2px #FF00FF, 0 0 5px #FF00FF, 0 0 10px #FF00FF, 0 0 20px #FF00FF;
+  }
+}
+
+.animate-neon {
+  animation: neon-glow 1.5s ease-in-out infinite alternate;
+}
+
+/* Twinkling stars */
+@keyframes twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.animate-twinkle {
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+/* Rotating element */
+@keyframes retro-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-retro-spin {
+  animation: retro-spin 4s linear infinite;
+}
+
+/* Bounce in */
+@keyframes retro-bounce {
+  0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-20px); }
+  60% { transform: translateY(-10px); }
+}
+
+.animate-retro-bounce {
+  animation: retro-bounce 2s ease infinite;
+}
+
+/* CRT scanline effect */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* Pixelated fade in */
+@keyframes pixel-fade {
+  0% {
+    opacity: 0;
+    filter: blur(4px);
+    transform: scale(0.95);
+  }
+  50% {
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+.animate-pixel-fade {
+  animation: pixel-fade 0.5s ease-out forwards;
+}
+
+/* Flicker like old monitor */
+@keyframes flicker {
+  0% { opacity: 0.97; }
+  5% { opacity: 0.9; }
+  10% { opacity: 0.97; }
+  15% { opacity: 0.93; }
+  20% { opacity: 0.97; }
+  50% { opacity: 0.95; }
+  80% { opacity: 0.97; }
+  90% { opacity: 0.94; }
+  100% { opacity: 0.97; }
+}
+
+.animate-flicker {
+  animation: flicker 3s linear infinite;
+}
+
+/* Horizontal rule retro style */
+.retro-hr {
+  border: none;
+  height: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    #FF0000 0px, #FF0000 4px,
+    #FF7F00 4px, #FF7F00 8px,
+    #FFFF00 8px, #FFFF00 12px,
+    #00FF00 12px, #00FF00 16px,
+    #0000FF 16px, #0000FF 20px,
+    #4B0082 20px, #4B0082 24px,
+    #9400D3 24px, #9400D3 28px
+  );
+}
+
+/* Retro beveled border (Windows 95 style) */
+.retro-bevel {
+  border: 3px solid;
+  border-color: #C0C0C0 #404040 #404040 #C0C0C0;
+}
+
+.retro-bevel-inset {
+  border: 3px solid;
+  border-color: #404040 #C0C0C0 #C0C0C0 #404040;
+}
+
+/* Stars background */
+.stars-bg {
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, #FFFFFF 100%, transparent),
+    radial-gradient(1px 1px at 30% 70%, #FFFF00 100%, transparent),
+    radial-gradient(1px 1px at 50% 40%, #FFFFFF 100%, transparent),
+    radial-gradient(1px 1px at 70% 80%, #00FFFF 100%, transparent),
+    radial-gradient(1px 1px at 90% 10%, #FFFFFF 100%, transparent),
+    radial-gradient(2px 2px at 15% 55%, #FFFF00 100%, transparent),
+    radial-gradient(1px 1px at 45% 90%, #FFFFFF 100%, transparent),
+    radial-gradient(2px 2px at 65% 15%, #FF00FF 100%, transparent),
+    radial-gradient(1px 1px at 85% 60%, #FFFFFF 100%, transparent),
+    radial-gradient(1px 1px at 25% 35%, #00FF00 100%, transparent),
+    radial-gradient(2px 2px at 55% 55%, #FFFFFF 100%, transparent),
+    radial-gradient(1px 1px at 75% 45%, #FFFF00 100%, transparent),
+    radial-gradient(1px 1px at 95% 85%, #00FFFF 100%, transparent),
+    radial-gradient(1px 1px at 5% 95%, #FFFFFF 100%, transparent),
+    radial-gradient(2px 2px at 35% 5%, #FF00FF 100%, transparent),
+    radial-gradient(1px 1px at 80% 30%, #FFFFFF 100%, transparent);
+}
+
+/* Glitch text effect */
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.animate-glitch {
+  animation: glitch 0.3s ease-in-out infinite;
+}
+
+/* Pulsating border */
+@keyframes border-pulse {
+  0%, 100% {
+    border-color: #FF00FF;
+    box-shadow: 0 0 5px #FF00FF, inset 0 0 5px rgba(255, 0, 255, 0.1);
+  }
+  33% {
+    border-color: #00FFFF;
+    box-shadow: 0 0 5px #00FFFF, inset 0 0 5px rgba(0, 255, 255, 0.1);
+  }
+  66% {
+    border-color: #00FF00;
+    box-shadow: 0 0 5px #00FF00, inset 0 0 5px rgba(0, 255, 0, 0.1);
+  }
+}
+
+.animate-border-pulse {
+  animation: border-pulse 3s ease-in-out infinite;
+}
+
+/* Matrix rain inspired text */
+@keyframes matrix-drop {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+/* Retro loading dots */
+@keyframes retro-dots {
+  0% { content: '.'; }
+  33% { content: '..'; }
+  66% { content: '...'; }
+}
+
+/* Wavy text */
+@keyframes wave {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Under construction animation */
+@keyframes construction-flash {
+  0%, 49% { background-color: #FFFF00; color: #000000; }
+  50%, 100% { background-color: #000000; color: #FFFF00; }
+}
+
+.animate-construction {
+  animation: construction-flash 1s step-end infinite;
+}
+
+/* CRT overlay effect for the whole page */
+.crt-overlay::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15) 0px,
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 3px
+  );
 }
