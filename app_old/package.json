@@ -1,0 +1,32 @@
+{
+  "name": "lost-media-metasearcher",
+  "version": "1.0.0",
+  "description": "API RESTful para busca de Lost Media e arquivos raros em serviços de nuvem públicos.",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "lost-media",
+    "metasearcher",
+    "osint",
+    "dorking",
+    "api",
+    "node.js",
+    "fastify"
+  ],
+  "author": "Manus AI",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.3.1",
+    "fastify": "^4.24.3",
+    "fastify-cors": "^6.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
