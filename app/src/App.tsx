@@ -171,15 +171,15 @@ export default function Home() {
   };
 
   // Computes platforms uniquely present in the API search results
-  const availablePlatforms = results 
-    ? Array.from(new Set(results.resultados.map(r => r.plataforma))) 
+  const availablePlatforms = results
+    ? Array.from(new Set(results.resultados.map(r => r.plataforma)))
     : [];
 
   // Filters results locally based on the clicked chip
-  const filteredResults = results 
-    ? (activePlatformFilter === 'all' 
-        ? results.resultados 
-        : results.resultados.filter(r => r.plataforma === activePlatformFilter))
+  const filteredResults = results
+    ? (activePlatformFilter === 'all'
+      ? results.resultados
+      : results.resultados.filter(r => r.plataforma === activePlatformFilter))
     : [];
 
   return (
@@ -206,7 +206,7 @@ export default function Home() {
           <div className="flex flex-col gap-2 relative">
             {/* Main title with retro styling */}
             <div className="flex items-end gap-3 flex-wrap">
-              <h1 
+              <h1
                 className="animate-neon"
                 style={{
                   fontFamily: '"Press Start 2P", cursive',
@@ -238,8 +238,8 @@ export default function Home() {
               textShadow: '0 0 5px #00FFFF',
               letterSpacing: '0.15em',
             }}>
-              {'>'} Metabuscador especializado em{' '}
-              <span className="animate-rainbow" style={{ fontWeight: 'bold' }}>Lost Media</span>
+              {'>'} Metabuscador Especializado em{' '}
+              <span className="animate-rainbow" style={{ fontWeight: 'bold' }}>Arquivos</span>
               {' '}<span className="animate-retro-blink">_</span>
             </p>
 
@@ -336,6 +336,7 @@ export default function Home() {
                 }}>
                   <li style={{ marginBottom: '4px' }}>{'\u25BA'} Use termos especificos para melhores resultados</li>
                   <li style={{ marginBottom: '4px' }}>{'\u25BA'} Tente variacoes do nome do arquivo ou titulo</li>
+                  <li style={{ marginBottom: '4px' }}>{'\u25BA'} Caso não encontre tente adicionar ano na pesquisa</li>
                   <li style={{ marginBottom: '4px' }}>{'\u25BA'} A busca e executada em multiplas plataformas simultaneamente</li>
                   <li>{'\u25BA'} Verifique o status de cada link antes de fazer download</li>
                 </ul>
@@ -401,7 +402,7 @@ export default function Home() {
             {availablePlatforms.length > 0 && (
               <div className="flex flex-wrap items-center gap-2.5 pt-2 pb-4">
                 <Filter className="w-4 h-4 mr-1" style={{ color: '#FF00FF' }} />
-                
+
                 <button
                   onClick={() => setActivePlatformFilter('all')}
                   style={{

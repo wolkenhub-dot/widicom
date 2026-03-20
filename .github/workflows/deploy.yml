@@ -1,0 +1,22 @@
+name: Deploy Automático na VPS
+
+# Quando a ação deve ocorrer? 
+# Sempre que houver um push na branch 'retro'
+on:
+  push:
+    branches:
+      - retro 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Conectar na VPS e rodar script de deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          # O GitHub vai entrar na VPS e rodar o script que criamos no Passo 1
+          script: |
+            bash ~/deploy.sh
