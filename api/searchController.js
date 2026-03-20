@@ -9,6 +9,7 @@ const scraperService = require('./scraperService');
 const searxngService = require('./searxngService');
 const linkResolver = require('./linkResolver');
 const linkChecker = require('./linkChecker');
+const relevanceEngine = require('./relevanceEngine');
 
 /**
  * Lógica principal da rota de busca.
@@ -50,11 +51,14 @@ async function search(request, reply) {
     // 4. Verifica o status de cada link de download direto
     const finalResults = await linkChecker.checkLinks(resolvedResults);
 
-    // 5. Retorna os resultados finais em formato JSON
+    // 5. Ordena os resultados com base na relevância e ocorrência das palavras chave no título
+    const sortedResults = relevanceEngine.sortResultsByRelevance(finalResults, query);
+
+    // 6. Retorna os resultados finais em formato JSON
     return reply.send({
       query,
-      total_resultados: finalResults.length,
-      resultados: finalResults
+      total_resultados: sortedResults.length,
+      resultados: sortedResults
     });
   } catch (error) {
     console.error('Erro durante a busca:', error.message);
