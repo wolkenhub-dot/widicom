@@ -20,6 +20,14 @@ export interface SearchResponse {
   resultados: SearchResult[];
 }
 
+export interface SourceHealth {
+  name: string;
+  platform: string;
+  timeMs: number;
+  status: 'Online' | 'Offline' | 'Timeout' | 'Vazio/Bloqueado';
+  count: number;
+}
+
 /**
  * URL base da API.
  * Recupera das variaveis de ambiente ou usa fallback.
@@ -83,3 +91,22 @@ export async function checkAPIHealth(): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * Dispara uma verificação real-time para as 11 fontes simultâneas e mensura a latência
+ */
+export async function checkSourcesHealth(): Promise<SourceHealth[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/health/sources`, {
+      method: 'GET',
+    });
+    
+    if (!response.ok) throw new Error('Falha ao auditar as Fontes.');
+    
+    const data = await response.json();
+    return data.data || [];
+  } catch (error) {
+    throw new Error('Erro de conexão no diagnóstico.');
+  }
+}
+

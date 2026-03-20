@@ -8,7 +8,7 @@ async function searchYTS(query, page = 1) {
     const url = `https://yts.mx/api/v2/list_movies.json?query_term=${encodeURIComponent(query)}&page=${page}&limit=15`;
     
     const response = await axios.get(url, {
-      headers: { 'User-Agent': 'Widicom-Retro-SearchBot/1.0' },
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' },
       timeout: 9000,
       signal: controller.signal
     });
@@ -28,7 +28,8 @@ async function searchYTS(query, page = 1) {
           title: `${movie.title} (${movie.year}) [${movie.rating}/10]`,
           url: magnetLink,
           platform: 'YTS',
-          type: 'torrent'
+          type: 'torrent',
+          imageUrl: movie.large_cover_image
         };
       });
     }

@@ -19,6 +19,7 @@ const nyaaService = require('./nyaaService');
 const linkResolver = require('./linkResolver');
 const linkChecker = require('./linkChecker');
 const relevanceEngine = require('./relevanceEngine');
+const metadataService = require('./metadataService');
 
 /**
  * Lógica principal da rota de busca.
@@ -82,7 +83,9 @@ async function search(request, reply) {
         titulo: result.title,
         plataforma: result.platform,
         url_original: result.url,
-        url_download_direto: directLink
+        url_download_direto: directLink,
+        type: result.type,
+        imageUrl: result.imageUrl
       };
     });
 
@@ -95,7 +98,9 @@ async function search(request, reply) {
         url_original: r.url,
         url_download_direto: r.url,
         plataforma: r.platform,
-        status: r.status // Já possui 'Ativo'
+        status: r.status, // Já possui 'Ativo'
+        type: r.type,
+        imageUrl: r.imageUrl
     }));
 
     // Recompõe o array final verificados + torrents
@@ -104,12 +109,16 @@ async function search(request, reply) {
     // 5. Ordena os resultados unificados com base na relevância
     const sortedResults = relevanceEngine.sortResultsByRelevance(finalMergedResults, query);
 
-    // 6. Retorna os resultados finais em formato JSON com metadados de paginação
+    // 6. Faz proxy de Metadata
+    const enrichedResults = await metadataService.enrichWithMetadata(sortedResults);
+
+    // 7. Retorna os resultados finais em formato JSON com metadados de paginação
+    let limitPaginated = enrichedResults.slice((page - 1) * 30, page * 30);
     return reply.send({
       query,
       pagina_atual: page,
-      total_resultados_nesta_pagina: sortedResults.length,
-      resultados: sortedResults
+      total_resultados_nesta_pagina: limitPaginated.length,
+      resultados: limitPaginated
     });
   } catch (error) {
     console.error('Erro durante a busca:', error.message);

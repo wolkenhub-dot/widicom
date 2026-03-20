@@ -8,23 +8,16 @@
 const fastify = require('fastify')({ logger: true });
 const path = require('path');
 const searchController = require('./searchController');
+const healthController = require('./healthController');
 
-// Carrega variáveis de ambiente de um arquivo .env (opcional)
 require('dotenv').config();
 
-// Habilita o CORS (Cross-Origin Resource Sharing)
 fastify.register(require('@fastify/cors'), {
-  origin: '*', // Permite todas as origens (ajuste para produção)
+  origin: '*', 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 });
 
-/**
- * Rota raiz da API.
- * 
- * @param {Object} request O objeto de requisição do Fastify.
- * @param {Object} reply O objeto de resposta do Fastify.
- */
 fastify.get('/', async (request, reply) => {
   return { 
     message: 'API de Metabuscador de Lost Media está ativa!',
@@ -33,13 +26,12 @@ fastify.get('/', async (request, reply) => {
   };
 });
 
-/**
- * Rota de busca principal.
- * 
- * @param {Object} request O objeto de requisição do Fastify.
- * @param {Object} reply O objeto de resposta do Fastify.
- */
 fastify.get('/search', searchController.search);
+
+/**
+ * Rota para verificar a integridade da conexão direta com todas as pontes API
+ */
+fastify.get('/health/sources', healthController.checkSources);
 
 /**
  * Inicializa o servidor Fastify na porta especificada.

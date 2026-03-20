@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { AlertCircle, Filter, ChevronLeft, ChevronRight, Search as SearchIcon } from 'lucide-react';
+import { AlertCircle, Filter, ChevronLeft, ChevronRight, Search as SearchIcon, Layers, Home as HomeIcon } from 'lucide-react';
 import SearchBar from '@/components/SearchBar';
 import ResultCard from '@/components/ResultCard';
+import SourcesPanel from '@/components/SourcesPanel';
 import { searchLostMedia, checkAPIHealth } from '@/lib/api';
 import type { SearchResponse } from '@/lib/api';
 import { toast } from 'sonner';
@@ -13,6 +14,7 @@ export default function Home() {
   const [lastQuery, setLastQuery] = useState('');
   const [activePlatformFilter, setActivePlatformFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentRoute, setCurrentRoute] = useState<'home' | 'fontes'>('home');
 
   // Check API health on mount
   useEffect(() => {
@@ -71,7 +73,32 @@ export default function Home() {
     : [];
 
   return (
-    <div className="min-h-screen bg-transparent relative selection:bg-indigo-500/30 font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-transparent relative selection:bg-indigo-500/30 font-sans overflow-x-hidden text-slate-100">
+      
+      {/* Navbar Minimalista (State Router) */}
+      <nav className="fixed top-0 left-0 w-full z-50 bg-black/20 backdrop-blur-md border-b border-white/5 py-4 px-4 sm:px-8 flex justify-between items-center animate-fade-in shadow-xl">
+        <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setCurrentRoute('home')}>
+          <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+            <SearchIcon className="w-4 h-4 text-white" />
+          </div>
+          <span className="font-extrabold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">Widicom</span>
+        </div>
+        <div className="flex gap-6">
+          <button 
+            onClick={() => setCurrentRoute('home')}
+            className={`flex items-center gap-2 text-sm font-semibold transition-colors ${currentRoute === 'home' ? 'text-indigo-400' : 'text-slate-400 hover:text-white'}`}
+          >
+            <HomeIcon className="w-4 h-4" /> <span className="hidden sm:inline">Buscar</span>
+          </button>
+          <button 
+            onClick={() => setCurrentRoute('fontes')}
+            className={`flex items-center gap-2 text-sm font-semibold transition-colors ${currentRoute === 'fontes' ? 'text-indigo-400' : 'text-slate-400 hover:text-white'}`}
+          >
+            <Layers className="w-4 h-4" /> <span className="hidden sm:inline">Diagnóstico</span>
+          </button>
+        </div>
+      </nav>
+
       {/* Decorative gradient orbs in background */}
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse-glow" />
       
@@ -87,8 +114,10 @@ export default function Home() {
         </div>
       )}
 
-      {/* Main Container smoothly shifting depending on search state */}
-      <main className={`container mx-auto px-4 sm:px-6 flex flex-col transition-all duration-700 ease-in-out ${!results && !isLoading ? 'min-h-screen justify-center pb-24' : 'pt-16 pb-24'}`}>
+      <div className="pt-20" />
+
+      {currentRoute === 'home' ? (
+        <main className={`container mx-auto px-4 sm:px-6 flex flex-col transition-all duration-700 ease-in-out ${!results && !isLoading ? 'min-h-[80vh] justify-center pb-24' : 'pt-8 pb-24'}`}>
         
         {/* Header & Main Search Region */}
         <div className={`w-full max-w-4xl mx-auto flex flex-col items-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${results || isLoading ? 'mb-12 scale-95' : 'mb-0 scale-100'}`}>
@@ -220,7 +249,10 @@ export default function Home() {
 
           </div>
         )}
-      </main>
+        </main>
+      ) : (
+        <SourcesPanel />
+      )}
 
     </div>
   );
