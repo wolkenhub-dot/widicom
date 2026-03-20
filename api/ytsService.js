@@ -1,0 +1,43 @@
+const axios = require('axios');
+
+async function searchYTS(query, page = 1) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const url = `https://yts.mx/api/v2/list_movies.json?query_term=${encodeURIComponent(query)}&page=${page}&limit=15`;
+    
+    const response = await axios.get(url, {
+      headers: { 'User-Agent': 'Widicom-Retro-SearchBot/1.0' },
+      timeout: 9000,
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    if (response.data && response.data.data && response.data.data.movies) {
+      return response.data.data.movies.map(movie => {
+        // Tenta pegar o Magnet Link do torrent de maior qualidade (normalmente o ultimo no array)
+        let magnetLink = movie.url; 
+        if (movie.torrents && movie.torrents.length > 0) {
+          const t = movie.torrents[0];
+          magnetLink = `magnet:?xt=urn:btih:${t.hash}&dn=${encodeURIComponent(movie.title)}&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce`;
+        }
+
+        return {
+          title: `${movie.title} (${movie.year}) [${movie.rating}/10]`,
+          url: magnetLink,
+          platform: 'YTS',
+          type: 'torrent'
+        };
+      });
+    }
+  } catch (error) {
+    clearTimeout(timeoutId);
+    console.log('[ytsService] Erro ao buscar no YTS:', error.message);
+  }
+
+  return [];
+}
+
+module.exports = { searchYTS };

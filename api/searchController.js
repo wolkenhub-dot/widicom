@@ -12,6 +12,10 @@ const odService = require('./odService');
 const githubService = require('./githubService');
 const openLibraryService = require('./openLibraryService');
 const torrentService = require('./torrentService');
+const vimmsLairService = require('./vimmsLairService');
+const gameBananaService = require('./gameBananaService');
+const ytsService = require('./ytsService');
+const nyaaService = require('./nyaaService');
 const linkResolver = require('./linkResolver');
 const linkChecker = require('./linkChecker');
 const relevanceEngine = require('./relevanceEngine');
@@ -40,21 +44,39 @@ async function search(request, reply) {
     const dorks = dorkEngine.generateDorks(query);
 
     // 2. Executa a metabusca de todos os módulos de forma paralela repassando a página
-    const [archiveResults, searxngResults, annasResults, odResults, githubResults, openLibraryResults, torrentResults] = await Promise.all([
+    const [
+      archiveResults, searxngResults, annasResults, odResults, githubResults, 
+      openLibraryResults, torrentResults, vimmsResults, gbResults, ytsResults, nyaaResults
+    ] = await Promise.all([
       scraperService.searchDorks(dorks, page),  
       searxngService.searchSearxNG(query, page),
       annasArchiveService.searchAnnasArchive(query, page),
       odService.searchODs(query, page),
       githubService.searchGitHub(query, page),
       openLibraryService.searchOpenLibrary(query, page),
-      torrentService.searchTorrents(query, page)
+      torrentService.searchTorrents(query, page),
+      vimmsLairService.searchVimmsLair(query, page),
+      gameBananaService.searchGameBanana(query, page),
+      ytsService.searchYTS(query, page),
+      nyaaService.searchNyaa(query, page)
     ]);
     
-    // Mescla os resultados 
-    const searchResults = [...searxngResults, ...archiveResults, ...annasResults, ...odResults, ...githubResults, ...openLibraryResults, ...torrentResults];
+    // Mescla os resultados de todas as 11 fontes
+    const searchResults = [
+      ...searxngResults, ...archiveResults, ...annasResults, ...odResults, 
+      ...githubResults, ...openLibraryResults, ...torrentResults,
+      ...vimmsResults, ...gbResults, ...ytsResults, ...nyaaResults
+    ];
 
-    // 3. Resolve os links de download direto para cada resultado
-    const resolvedResults = searchResults.map(result => {
+    // ==== Bypass Crítico do Link Checker ====
+    // Filtramos links do tipo torrent ou magnets nativos
+    const normalResults = searchResults.filter(r => r.type !== 'torrent' && !(r.url && r.url.startsWith('magnet:')));
+    const bypassTorrents = searchResults
+      .filter(r => r.type === 'torrent' || (r.url && r.url.startsWith('magnet:')))
+      .map(r => ({ ...r, status: 'Ativo' })); // Bypass
+
+    // 3. Resolve os links de download direto apenas para resultados normais
+    const resolvedResults = normalResults.map(result => {
       const directLink = linkResolver.resolveDirectLink(result.url, result.platform);
       return {
         titulo: result.title,
@@ -64,11 +86,23 @@ async function search(request, reply) {
       };
     });
 
-    // 4. Verifica o status de cada link de download direto
-    const finalResults = await linkChecker.checkLinks(resolvedResults);
+    // 4. Verifica o status HTTP apenas das rotas normais
+    const activeResults = await linkChecker.checkLinks(resolvedResults);
 
-    // 5. Ordena os resultados com base na relevância e ocorrência das palavras chave no título
-    const sortedResults = relevanceEngine.sortResultsByRelevance(finalResults, query);
+    // Ajusta o formato dos torrents do bypass
+    const formattedBypass = bypassTorrents.map(r => ({
+        titulo: r.title,
+        url_original: r.url,
+        url_download_direto: r.url,
+        plataforma: r.platform,
+        status: r.status // Já possui 'Ativo'
+    }));
+
+    // Recompõe o array final verificados + torrents
+    const finalMergedResults = [...activeResults, ...formattedBypass];
+
+    // 5. Ordena os resultados unificados com base na relevância
+    const sortedResults = relevanceEngine.sortResultsByRelevance(finalMergedResults, query);
 
     // 6. Retorna os resultados finais em formato JSON com metadados de paginação
     return reply.send({
