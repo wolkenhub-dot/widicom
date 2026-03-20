@@ -7,6 +7,11 @@
 const dorkEngine = require('./dorkEngine');
 const scraperService = require('./scraperService');
 const searxngService = require('./searxngService');
+const annasArchiveService = require('./annasArchiveService');
+const odService = require('./odService');
+const githubService = require('./githubService');
+const openLibraryService = require('./openLibraryService');
+const torrentService = require('./torrentService');
 const linkResolver = require('./linkResolver');
 const linkChecker = require('./linkChecker');
 const relevanceEngine = require('./relevanceEngine');
@@ -35,13 +40,18 @@ async function search(request, reply) {
     const dorks = dorkEngine.generateDorks(query);
 
     // 2. Executa a metabusca de todos os módulos de forma paralela repassando a página
-    const [archiveResults, searxngResults] = await Promise.all([
+    const [archiveResults, searxngResults, annasResults, odResults, githubResults, openLibraryResults, torrentResults] = await Promise.all([
       scraperService.searchDorks(dorks, page),  
-      searxngService.searchSearxNG(query, page) 
+      searxngService.searchSearxNG(query, page),
+      annasArchiveService.searchAnnasArchive(query, page),
+      odService.searchODs(query, page),
+      githubService.searchGitHub(query, page),
+      openLibraryService.searchOpenLibrary(query, page),
+      torrentService.searchTorrents(query, page)
     ]);
     
     // Mescla os resultados 
-    const searchResults = [...searxngResults, ...archiveResults];
+    const searchResults = [...searxngResults, ...archiveResults, ...annasResults, ...odResults, ...githubResults, ...openLibraryResults, ...torrentResults];
 
     // 3. Resolve os links de download direto para cada resultado
     const resolvedResults = searchResults.map(result => {

@@ -77,6 +77,7 @@ async function searchSearxNG(query, page = 1) {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         },
+        timeout: 3500, // Timeout por instância de 3.5s para não comer o AbortController global
         signal: controller.signal // O Axios usará o singal nativo do Node.js
       });
 
@@ -90,11 +91,11 @@ async function searchSearxNG(query, page = 1) {
         }));
       }
     } catch (error) {
-      if (axios.isCancel(error) || error.name === 'AbortError' || error.code === 'ECONNABORTED') {
-        console.log('[searxngService] Serviço SearxNG abortado compulsoriamente devido ao limite de tempo.');
-        break;
+      if (controller.signal.aborted) {
+        console.log('[searxngService] Timeout global estourou durante a requisição. Abortando loop.');
+        break; 
       }
-      console.error(`[searxngService] Falha de comunicação na instância ${instance} (${error.message}). Rodando fallback...`);
+      console.error(`[searxngService] Falha de comunicação na instância ${instance} (${error.message}). Rodando próxima...`);
     }
   }
 

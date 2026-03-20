@@ -15,8 +15,9 @@ const axios = require('axios');
  */
 async function checkLinkStatus(url) {
   // Plataformas Cloud grandes costumam demorar muito para responder a HEAD requests ou dar Rate Limit.
+  // Magnets (Torrents) não usam HTTP, portanto também não podem ser checados via Axios.
   // Assumimos que estão ativas automaticamente para não travar a UI/UX do aplicativo.
-  if (url.includes('mega.nz') || url.includes('drive.google.com') || url.includes('mediafire.com')) {
+  if (url.startsWith('magnet:') || url.includes('mega.nz') || url.includes('drive.google.com') || url.includes('mediafire.com')) {
     return 'Ativo';
   }
 

@@ -105,6 +105,23 @@ function generateDorks(query, categoria = "tudo") {
   return dorks;
 }
 
+/**
+ * Gera uma dork focada exclusivamente em Index of (Open Directories).
+ * Útil para achar arquivos hospedados em servidores raiz sem interface.
+ * 
+ * @param {string} query O termo de busca do usuário.
+ * @returns {string[]} Uma query focada para encontrar ODs antigos (Apache/Nginx).
+ */
+function generateODDorks(query) {
+  const termoLimpo = query.trim();
+  // Busca por título index of e exclui páginas comuns de web dinâmicas 
+  // para focar nas listagens originais (como se fosse um FTP web).
+  return [
+    `intitle:"index of" "${termoLimpo}" -inurl:(jsp|pl|php|html|aspx|htm|cf|shtml)`
+  ];
+}
+
 module.exports = {
-  generateDorks
+  generateDorks,
+  generateODDorks
 };
