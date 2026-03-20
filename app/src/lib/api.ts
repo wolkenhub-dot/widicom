@@ -15,7 +15,8 @@ export interface SearchResult {
 
 export interface SearchResponse {
   query: string;
-  total_resultados: number;
+  pagina_atual: number;
+  total_resultados_nesta_pagina: number;
   resultados: SearchResult[];
 }
 
@@ -29,10 +30,11 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
  * Realiza uma busca na API.
  * 
  * @param query O texto a ser buscado.
+ * @param page A pagina de resultados
  * @returns Uma promessa que resolve para os resultados da busca.
  * @throws Erro se a requisição falhar.
  */
-export async function searchLostMedia(query: string): Promise<SearchResponse> {
+export async function searchLostMedia(query: string, page: number = 1): Promise<SearchResponse> {
   if (!query.trim()) {
     throw new Error('O termo de busca não pode estar vazio.');
   }
@@ -40,6 +42,7 @@ export async function searchLostMedia(query: string): Promise<SearchResponse> {
   try {
     const url = new URL(`${API_BASE_URL}/search`);
     url.searchParams.append('query', query);
+    url.searchParams.append('page', page.toString());
 
     const response = await fetch(url.toString(), {
       method: 'GET',

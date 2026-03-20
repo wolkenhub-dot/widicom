@@ -103,7 +103,9 @@ function RetroSeparator() {
 }
 
 /** Webring navigation - classic 90s feature */
-function WebRing() {
+function WebRing({ onPrev, onNext, canPrev, canNext, currentPage }: { onPrev: () => void, onNext: () => void, canPrev: boolean, canNext: boolean, currentPage: number }) {
+  if (!canPrev && !canNext && currentPage === 1) return null;
+
   return (
     <div className="flex items-center justify-center gap-3 py-2"
       style={{
@@ -114,11 +116,19 @@ function WebRing() {
       }}
     >
       <span style={{ color: '#00FFFF' }}>[</span>
-      <span className="animate-rainbow" style={{ cursor: 'pointer' }}>{'\u25C4'} Prev</span>
+      {canPrev ? (
+        <span className="animate-rainbow" style={{ cursor: 'pointer' }} onClick={onPrev}>{'\u25C4'} Prev</span>
+      ) : (
+        <span style={{ color: '#444444' }}>{'\u25C4'} Prev</span>
+      )}
       <span style={{ color: '#FFFF00' }}>|</span>
-      <span style={{ color: '#FF00FF', fontFamily: '"Press Start 2P", cursive', fontSize: '0.5rem' }}>Arquivos WebRing</span>
+      <span style={{ color: '#FF00FF', fontFamily: '"Press Start 2P", cursive', fontSize: '0.45rem', paddingTop: '2px' }}>Pág. {currentPage}</span>
       <span style={{ color: '#FFFF00' }}>|</span>
-      <span className="animate-rainbow" style={{ cursor: 'pointer', animationDelay: '1.5s' }}>Next {'\u25BA'}</span>
+      {canNext ? (
+        <span className="animate-rainbow" style={{ cursor: 'pointer', animationDelay: '1.5s' }} onClick={onNext}>Next {'\u25BA'}</span>
+      ) : (
+        <span style={{ color: '#444444' }}>Next {'\u25BA'}</span>
+      )}
       <span style={{ color: '#00FFFF' }}>]</span>
     </div>
   );
@@ -139,6 +149,8 @@ export default function Home() {
     }))
   );
 
+  const [currentPage, setCurrentPage] = useState(1);
+
   // Verifica a disponibilidade da API ao carregar a pagina
   useEffect(() => {
     checkAPIHealth()
@@ -146,20 +158,21 @@ export default function Home() {
       .catch(() => setApiAvailable(false));
   }, []);
 
-  const handleSearch = async (query: string) => {
+  const handleSearch = async (query: string, page: number = 1) => {
     setIsLoading(true);
     setLastQuery(query);
-    setResults(null);
+    setCurrentPage(page);
     setActivePlatformFilter('all');
+    setResults(null); // Oculta a grid antiga para a animação CRT/BBS piscar na tela novamente
 
     try {
-      const data = await searchLostMedia(query);
+      const data = await searchLostMedia(query, page);
       setResults(data);
 
-      if (data.total_resultados === 0) {
-        toast.info('Nenhum resultado encontrado para esta busca.');
+      if (data.total_resultados_nesta_pagina === 0) {
+        toast.info(page === 1 ? 'Nenhum resultado encontrado para esta busca.' : 'Fim dos resultados.');
       } else {
-        toast.success(`${data.total_resultados} resultado(s) encontrado(s)!`);
+        if (page === 1) toast.success(`${data.total_resultados_nesta_pagina} resultado(s) encontrado(s) na primeira página!`);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao buscar';
@@ -167,6 +180,20 @@ export default function Home() {
       console.error('Erro na busca:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (results && results.total_resultados_nesta_pagina > 0 && !isLoading) {
+      handleSearch(lastQuery, currentPage + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1 && !isLoading) {
+      handleSearch(lastQuery, currentPage - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -304,7 +331,7 @@ export default function Home() {
         {/* Secao de Busca */}
         <div className="mb-12">
           <div className="mb-6">
-            <SearchBar onSearch={handleSearch} isLoading={isLoading} />
+            <SearchBar onSearch={(q) => handleSearch(q, 1)} isLoading={isLoading} />
           </div>
 
           {/* Dicas de Busca */}
@@ -371,7 +398,7 @@ export default function Home() {
                   color: '#00FF00',
                   marginTop: '4px',
                 }}>
-                  {'>'} {results.total_resultados} resultado(s) encontrado(s)
+                  {'>'} {results.total_resultados_nesta_pagina} resultado(s) renderizado(s) na Pág. {results.pagina_atual}
                 </p>
               </div>
               <button
@@ -483,7 +510,7 @@ export default function Home() {
               fontSize: '1.3rem',
               color: '#00FFFF',
             }}>
-              {'>'} Conectando a multiplas BBS...
+              {'>'} {currentPage > 1 ? `Requisitando buffers da página ${currentPage} via Socket...` : 'Conectando a multiplas BBS...'}
             </div>
             <div className="mt-4 flex gap-1">
               {[...Array(10)].map((_, i) => (
@@ -515,8 +542,16 @@ export default function Home() {
 
       <RetroSeparator />
 
-      {/* WebRing */}
-      <WebRing />
+      {/* WebRing Paginação */}
+      {results && (
+        <WebRing 
+          onPrev={handlePrevPage}
+          onNext={handleNextPage}
+          canPrev={currentPage > 1}
+          canNext={results.total_resultados_nesta_pagina > 0} // Se vier vazio, não mostra Next
+          currentPage={currentPage}
+        />
+      )}
 
       {/* Footer */}
       <footer className="relative z-10 mt-4" style={{

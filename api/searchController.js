@@ -19,6 +19,12 @@ const relevanceEngine = require('./relevanceEngine');
  */
 async function search(request, reply) {
   const { query } = request.query;
+  let page = parseInt(request.query.page, 10);
+
+  // Validação segura da página solicitada
+  if (Number.isNaN(page) || page < 1) {
+    page = 1;
+  }
 
   if (!query) {
     return reply.status(400).send({ error: 'O parâmetro "query" é obrigatório.' });
@@ -28,13 +34,13 @@ async function search(request, reply) {
     // 1. Gera as dorks com base no termo de busca (para o Archive)
     const dorks = dorkEngine.generateDorks(query);
 
-    // 2. Executa a metabusca de todos os módulos de forma paralela (assíncrona)
+    // 2. Executa a metabusca de todos os módulos de forma paralela repassando a página
     const [archiveResults, searxngResults] = await Promise.all([
-      scraperService.searchDorks(dorks),  // Fonte Core
-      searxngService.searchSearxNG(query) // Fonte Graceful Degradation (Timeout de 10s embutido invisível)
+      scraperService.searchDorks(dorks, page),  
+      searxngService.searchSearxNG(query, page) 
     ]);
     
-    // Mescla os resultados colocando o SearxNG/Reddit (Drive/Mega) no início e Internet Archive no final
+    // Mescla os resultados 
     const searchResults = [...searxngResults, ...archiveResults];
 
     // 3. Resolve os links de download direto para cada resultado
@@ -54,10 +60,11 @@ async function search(request, reply) {
     // 5. Ordena os resultados com base na relevância e ocorrência das palavras chave no título
     const sortedResults = relevanceEngine.sortResultsByRelevance(finalResults, query);
 
-    // 6. Retorna os resultados finais em formato JSON
+    // 6. Retorna os resultados finais em formato JSON com metadados de paginação
     return reply.send({
       query,
-      total_resultados: sortedResults.length,
+      pagina_atual: page,
+      total_resultados_nesta_pagina: sortedResults.length,
       resultados: sortedResults
     });
   } catch (error) {

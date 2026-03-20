@@ -12,9 +12,10 @@ const axios = require('axios');
  * Realiza a busca utilizando a API do Internet Archive.
  * 
  * @param {string[]} dorks Lista de queries (apenas a query em si é repassada).
+ * @param {number} page A página atual da requisição.
  * @returns {Promise<Object[]>} Uma promessa com a lista de resultados.
  */
-async function searchDorks(dorks) {
+async function searchDorks(dorks, page = 1) {
   // Utilizamos a primeira query formatada que não contenha os operadores "site:" ou isolamos a palavra chave
   let baseQuery = "arquivos perdidos";
   if (dorks.length > 0) {
@@ -30,7 +31,7 @@ async function searchDorks(dorks) {
 
   const results = [];
   try {
-    const url = `https://archive.org/advancedsearch.php?q=${encodeURIComponent(baseQuery)}&output=json&rows=15`;
+    const url = `https://archive.org/advancedsearch.php?q=${encodeURIComponent(baseQuery)}&output=json&rows=15&page=${page}`;
     const response = await axios.get(url, { timeout: 10000 });
     
     if (response.data && response.data.response && response.data.response.docs) {
