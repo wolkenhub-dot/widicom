@@ -20,7 +20,7 @@ interface SearchBarProps {
 export default function SearchBar({ 
   onSearch, 
   isLoading = false,
-  placeholder = 'Buscar Lost Media, arquivos raros...'
+  placeholder = 'Buscar arquivos...',
 }: SearchBarProps) {
   const [query, setQuery] = useState('');
   const handleSubmit = (e: React.FormEvent) => {

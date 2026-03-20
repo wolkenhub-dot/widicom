@@ -1,7 +1,7 @@
 /**
  * Home.tsx
  * 
- * Pagina principal do Widicom - Metabuscador de Lost Media.
+ * Pagina principal do Widicom - Metabuscador especializado em encontrar arquivos.
  * Design: 90s Retro Internet - Nostalgic Web 1.0 aesthetic.
  */
 
@@ -116,7 +116,7 @@ function WebRing() {
       <span style={{ color: '#00FFFF' }}>[</span>
       <span className="animate-rainbow" style={{ cursor: 'pointer' }}>{'\u25C4'} Prev</span>
       <span style={{ color: '#FFFF00' }}>|</span>
-      <span style={{ color: '#FF00FF', fontFamily: '"Press Start 2P", cursive', fontSize: '0.5rem' }}>Lost Media WebRing</span>
+      <span style={{ color: '#FF00FF', fontFamily: '"Press Start 2P", cursive', fontSize: '0.5rem' }}>Arquivos WebRing</span>
       <span style={{ color: '#FFFF00' }}>|</span>
       <span className="animate-rainbow" style={{ cursor: 'pointer', animationDelay: '1.5s' }}>Next {'\u25BA'}</span>
       <span style={{ color: '#00FFFF' }}>]</span>
@@ -195,7 +195,7 @@ export default function Home() {
       <UnderConstructionBanner />
 
       {/* Marquee */}
-      <RetroMarquee text={'\u2605 \u2605 \u2605  Welcome to WIDICOM -- The #1 Lost Media Metasearch Engine on the World Wide Web!!!  \u2605 \u2605 \u2605  Best viewed in Netscape Navigator 4.0 at 800x600  \u2605 \u2605 \u2605  Sign our Guestbook!  \u2605 \u2605 \u2605'} />
+      <RetroMarquee text={'\u2605 \u2605 \u2605  Welcome to WIDICOM -- The #1 File Metasearch Engine on the World Wide Web!!!  \u2605 \u2605 \u2605  Best viewed in Netscape Navigator 4.0 at 800x600  \u2605 \u2605 \u2605  Sign our Guestbook!  \u2605 \u2605 \u2605'} />
 
       {/* Header */}
       <header className="relative z-10" style={{
@@ -529,7 +529,7 @@ export default function Home() {
         }}>
           <div className="retro-hr mb-4" />
           <p style={{ color: '#00FFFF', marginBottom: '8px' }}>
-            {'\u2605'} Widicom {'\u00A9'} 2026 | Metabuscador de Lost Media e Arquivos Raros {'\u2605'}
+            {'\u2605'} Widicom {'\u00A9'} 2026 | Metabuscador especializado em encontrar arquivos {'\u2605'}
           </p>
           <p style={{ color: '#808080', fontSize: '0.9rem' }}>
             Made with {'<3'} in a 56k modem | Best viewed in 800x600

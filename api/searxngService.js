@@ -12,8 +12,10 @@ const axios = require('axios');
 // Instâncias públicas para rotação
 const SEARXNG_INSTANCES = [
   'https://searx.be',
-  'https://searx.work',
-  'https://searx.space',
+  'https://paulgo.io',
+  'https://searx.fmac.network',
+  'https://search.mdosch.de',
+  'https://search.ononoki.org',
   'https://searx.tiekoetter.com'
 ];
 
@@ -26,6 +28,10 @@ function identifyPlatform(url) {
   if (urlLower.includes('mega.nz')) return 'Mega.nz';
   if (urlLower.includes('mediafire.com')) return 'MediaFire';
   if (urlLower.includes('dropbox.com')) return 'Dropbox';
+  if (urlLower.includes('github.com')) return 'GitHub';
+  if (urlLower.includes('gitlab.com')) return 'GitLab';
+  if (urlLower.includes('sourceforge.net')) return 'SourceForge';
+  if (urlLower.includes('4shared.com')) return '4Shared';
   return 'Outra';
 }
 
@@ -45,9 +51,10 @@ async function searchSearxNG(query) {
   const baseOnly = query.split('(')[0].trim();
   
   // Apenas englobamos com aspas se for uma string simples para ser precisa. Se houver tags (OR/AND), evitamos corromper a regex nativa dos buscadores.
+  const expandedSites = "site:drive.google.com OR site:mega.nz OR site:mediafire.com OR site:dropbox.com OR site:github.com OR site:gitlab.com OR site:sourceforge.net OR site:4shared.com";
   const searxQuery = hasTags
-    ? `${cleanQuery} (site:drive.google.com OR site:mega.nz OR site:mediafire.com)`
-    : `"${query}" (site:drive.google.com OR site:mega.nz OR site:mediafire.com)`;
+    ? `${cleanQuery} (${expandedSites})`
+    : `"${query}" (${expandedSites})`;
 
   for (const instance of SEARXNG_INSTANCES) {
     if (controller.signal.aborted) {
@@ -91,9 +98,10 @@ async function searchSearxNG(query) {
     console.log('[searxngService] Todas instâncias SearxNG caíram ou bloquearam (IP Ban). Acionando Reddit Fallback...');
     try {
       // Para o Reddit, querys booleanas longas falham as buscas. Mandamos apenas a palavra chave principal protegida.
+      const redditSites = '"drive.google.com" OR "mega.nz" OR "mediafire.com" OR "dropbox.com" OR "github.com" OR "gitlab.com" OR "sourceforge.net" OR "4shared.com"';
       const redditQ = hasTags
-        ? `"${baseOnly}" ("drive.google.com" OR "mega.nz" OR "mediafire.com")`
-        : `"${query}" ("drive.google.com" OR "mega.nz" OR "mediafire.com")`;
+        ? `"${baseOnly}" (${redditSites})`
+        : `"${query}" (${redditSites})`;
         
       const redditUrl = `https://www.reddit.com/search.json?q=${encodeURIComponent(redditQ)}&sort=relevance&limit=15`;
       const res = await axios.get(redditUrl, { 
@@ -102,7 +110,7 @@ async function searchSearxNG(query) {
       });
       
       const results = [];
-      const urlRegex = /(https?:\/\/(?:drive\.google\.com|mega\.nz|mediafire\.com)[^\s"'\)\]]+)/gi;
+      const urlRegex = /(https?:\/\/(?:drive\.google\.com|mega\.nz|mediafire\.com|dropbox\.com|github\.com|gitlab\.com|sourceforge\.net|4shared\.com)[^\s"'\)\]]+)/gi;
       
       res.data.data.children.forEach(post => {
         const text = post.data.selftext || "";
@@ -111,7 +119,7 @@ async function searchSearxNG(query) {
            let cleanUrl = match[1].replace(/\\_/g, '_').replace(/\\/g, '');
            results.push({ title: post.data.title, url: cleanUrl, platform: identifyPlatform(cleanUrl) });
         }
-        if (post.data.url && post.data.url.match(/(drive\.google|mega\.nz|mediafire)/i)) {
+        if (post.data.url && post.data.url.match(/(drive\.google|mega\.nz|mediafire|dropbox|github|gitlab|sourceforge|4shared)/i)) {
            let cleanUrl = post.data.url.replace(/\\_/g, '_').replace(/\\/g, '');
            results.push({ title: post.data.title, url: cleanUrl, platform: identifyPlatform(cleanUrl) });
         }

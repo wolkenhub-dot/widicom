@@ -20,15 +20,15 @@ export interface SearchResponse {
 }
 
 /**
- * URL base da API de Lost Media.
- * Pode ser configurada via variável de ambiente VITE_API_URL
+ * URL base da API.
+ * Recupera das variaveis de ambiente ou usa fallback.
  */
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 /**
- * Realiza uma busca na API de Lost Media.
+ * Realiza uma busca na API.
  * 
- * @param query O termo de busca.
+ * @param query O texto a ser buscado.
  * @returns Uma promessa que resolve para os resultados da busca.
  * @throws Erro se a requisição falhar.
  */
@@ -61,7 +61,7 @@ export async function searchLostMedia(query: string): Promise<SearchResponse> {
     if (error instanceof Error) {
       throw error;
     }
-    throw new Error('Erro desconhecido ao buscar Lost Media.');
+    throw new Error('Erro desconhecido ao buscar arquivos.');
   }
 }
 
