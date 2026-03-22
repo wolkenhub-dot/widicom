@@ -7,6 +7,8 @@ import SearchLoading from '@/components/SearchLoading';
 import { searchLostMedia, checkAPIHealth } from '@/lib/api';
 import type { SearchResponse } from '@/lib/api';
 import { toast } from 'sonner';
+import Particles, { initParticlesEngine } from '@tsparticles/react';
+import { loadSlim } from '@tsparticles/slim';
 
 export default function Home() {
   const [results, setResults] = useState<SearchResponse | null>(null);
@@ -19,12 +21,20 @@ export default function Home() {
   const [currentRoute, setCurrentRoute] = useState<'home' | 'fontes'>('home');
   const [searchMode, setSearchMode] = useState<'quick' | 'deep'>('deep');
   const [currentQuery, setCurrentQuery] = useState('');
+  const [initParticles, setInitParticles] = useState(false);
 
   // Check API health on mount
   useEffect(() => {
     checkAPIHealth()
       .then(available => setApiAvailable(available))
       .catch(() => setApiAvailable(false));
+      
+    // Init tsParticles once
+    initParticlesEngine(async (engine) => {
+      await loadSlim(engine);
+    }).then(() => {
+      setInitParticles(true);
+    });
   }, []);
 
   // Initialize theme from localStorage
@@ -137,9 +147,87 @@ export default function Home() {
       : results.resultados.filter(r => r.plataforma === activePlatformFilter))
     : [];
 
+    : [];
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-black relative selection:bg-indigo-500/20 dark:selection:bg-emerald-500/30 text-slate-800 dark:text-emerald-50 transition-colors duration-500">
       
+      {/* Background Particles (Dark Mode Only) */}
+      {theme === 'dark' && initParticles && (
+        <Particles
+          id="tsparticles"
+          className="absolute inset-0 z-0 pointer-events-none"
+          options={{
+            background: {
+              color: 'transparent',
+            },
+            fpsLimit: 60,
+            interactivity: {
+              events: {
+                onHover: {
+                  enable: true,
+                  mode: 'repulse',
+                },
+              },
+              modes: {
+                repulse: {
+                  distance: 100,
+                  duration: 0.4,
+                },
+              },
+            },
+            particles: {
+              color: {
+                value: ['#10b981', '#34d399', '#059669'], // Emerald hues
+              },
+              links: {
+                color: '#10b981',
+                distance: 150,
+                enable: true,
+                opacity: 0.1,
+                width: 1,
+              },
+              move: {
+                direction: 'none',
+                enable: true,
+                outModes: {
+                  default: 'bounce',
+                },
+                random: true,
+                speed: 0.8,
+                straight: false,
+              },
+              number: {
+                density: {
+                  enable: true,
+                },
+                value: 60,
+              },
+              opacity: {
+                value: 0.3,
+                animation: {
+                  enable: true,
+                  speed: 0.5,
+                  minimumValue: 0.1,
+                }
+              },
+              shape: {
+                type: 'circle',
+              },
+              size: {
+                value: { min: 1, max: 4 },
+                animation: {
+                  enable: true,
+                  speed: 2,
+                  minimumValue: 1,
+                }
+              },
+            },
+            detectRetina: true,
+          }}
+        />
+      )}
+
       {/* Navbar Minimalista (State Router) */}
       <nav className="fixed top-0 left-0 w-full z-50 bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-b border-slate-200/50 dark:border-white/5 py-4 px-4 sm:px-8 flex justify-between items-center animate-fade-in shadow-sm dark:shadow-[0_4px_30px_rgba(0,0,0,0.8)] transition-colors duration-500">
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setCurrentRoute('home')}>
