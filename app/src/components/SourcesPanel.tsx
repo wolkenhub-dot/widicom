@@ -34,9 +34,7 @@ export default function SourcesPanel() {
   };
 
   const onlineCount = sources.filter(r => r.status.startsWith('Online')).length;
-  const offlineCount = hasTested ? sources.length - onlineCount : 0;
   const onlinePerc = hasTested && sources.length > 0 ? Math.round((onlineCount / sources.length) * 100) : 0;
-  const offlinePerc = hasTested && sources.length > 0 ? 100 - onlinePerc : 0;
 
   return (
     <div className="w-full max-w-7xl mx-auto py-12 px-4 animate-fade-in text-slate-800 dark:text-emerald-50">
