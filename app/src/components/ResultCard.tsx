@@ -42,7 +42,7 @@ export default function ResultCard({
       {/* Platform & Status Row */}
       <div className="relative z-10 flex justify-between items-center mb-6">
         <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] uppercase tracking-wider font-bold bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-white/70 border border-slate-200/80 dark:border-white/10 group-hover:border-slate-300 dark:group-hover:border-white/20 transition-colors">
-          {isTorrent ? <HardDrive className="w-3.5 h-3.5 text-indigo-500 dark:text-emerald-400" /> : <Cpu className="w-3.5 h-3.5 text-indigo-500 dark:text-emerald-400" />}
+          {isTorrent ? <HardDrive className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> : <Cpu className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />}
           {plataforma}
         </span>
         <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] uppercase tracking-wider font-black border ${conf.bg} ${conf.color} ${conf.border}`}>
@@ -52,7 +52,7 @@ export default function ResultCard({
       </div>
 
       {/* Title */}
-      <h3 className="relative z-10 text-lg md:text-xl font-display font-bold text-slate-900 dark:text-emerald-50 leading-snug mb-6 line-clamp-3 group-hover:text-indigo-600 dark:group-hover:text-emerald-400 transition-colors">
+      <h3 className="relative z-10 text-lg md:text-xl font-display font-bold text-slate-900 dark:text-emerald-50 leading-snug mb-6 line-clamp-3 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
         {titulo || 'Midia não identificada'}
       </h3>
 
@@ -68,7 +68,7 @@ export default function ResultCard({
 
         <button
           onClick={() => window.open(url_download_direto || url_original, '_blank')}
-          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs uppercase tracking-wider font-bold bg-indigo-600 dark:bg-emerald-600 text-white hover:bg-indigo-700 dark:hover:bg-emerald-500 shadow-md shadow-indigo-600/20 dark:shadow-emerald-600/20 hover:shadow-indigo-600/40 dark:hover:shadow-emerald-600/40 transition-all duration-500 ease-out outline-none"
+          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs uppercase tracking-wider font-bold bg-emerald-600 dark:bg-emerald-600 text-white hover:bg-emerald-700 dark:hover:bg-emerald-500 shadow-md shadow-emerald-600/20 dark:shadow-emerald-600/20 hover:shadow-emerald-600/40 dark:hover:shadow-emerald-600/40 transition-all duration-500 ease-out outline-none"
         >
           {isTorrent ? (
             <HardDrive className="w-3.5 h-3.5" />

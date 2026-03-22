@@ -147,10 +147,10 @@ export default function Home() {
       : results.resultados.filter(r => r.plataforma === activePlatformFilter))
     : [];
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-black relative selection:bg-indigo-500/20 dark:selection:bg-emerald-500/30 text-slate-800 dark:text-emerald-50 transition-colors duration-500">
+    <div className="min-h-screen bg-slate-50 dark:bg-black relative selection:bg-emerald-500/20 dark:selection:bg-emerald-500/30 text-slate-800 dark:text-emerald-50 transition-colors duration-500">
       
-      {/* Background Particles (Dark Mode Only) */}
-      {theme === 'dark' && initParticles && (
+      {/* Background Particles */}
+      {initParticles && (
         <Particles
           id="tsparticles"
           className="absolute inset-0 z-0 pointer-events-none"
@@ -175,13 +175,13 @@ export default function Home() {
             },
             particles: {
               color: {
-                value: ['#10b981', '#34d399', '#059669'], // Emerald hues
+                value: theme === 'dark' ? ['#10b981', '#34d399', '#059669'] : ['#34d399', '#6ee7b7', '#a7f3d0'], // Dynamic Emerald hues
               },
               links: {
-                color: '#10b981',
+                color: theme === 'dark' ? '#10b981' : '#6ee7b7',
                 distance: 150,
                 enable: true,
-                opacity: 0.1,
+                opacity: theme === 'dark' ? 0.1 : 0.4,
                 width: 1,
               },
               move: {
@@ -201,7 +201,7 @@ export default function Home() {
                 value: 60,
               },
               opacity: {
-                value: 0.3,
+                value: theme === 'dark' ? 0.3 : 0.5,
                 animation: {
                   enable: true,
                   speed: 0.5,
@@ -226,9 +226,9 @@ export default function Home() {
       {/* Navbar Minimalista (State Router) */}
       <nav className="fixed top-0 left-0 w-full z-50 bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-b border-slate-200/50 dark:border-white/5 py-4 px-4 sm:px-8 flex justify-between items-center animate-fade-in shadow-sm dark:shadow-[0_4px_30px_rgba(0,0,0,0.8)] transition-colors duration-500">
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setCurrentRoute('home')}>
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 dark:from-emerald-400 dark:to-cyan-500 p-[1px] shadow-sm shadow-indigo-500/20 dark:shadow-emerald-500/20 group-hover:scale-105 transition-transform duration-500">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-emerald-400 dark:from-emerald-400 dark:to-cyan-500 p-[1px] shadow-sm shadow-emerald-500/20 dark:shadow-emerald-500/20 group-hover:scale-105 transition-transform duration-500">
             <div className="w-full h-full bg-white dark:bg-black backdrop-blur-sm rounded-[11px] flex items-center justify-center">
-              <SearchIcon className="w-4 h-4 text-indigo-600 dark:text-emerald-400" />
+              <SearchIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             </div>
           </div>
           <span className="font-display font-bold text-xl tracking-tight text-slate-900 dark:text-emerald-50">Widicom</span>
@@ -236,13 +236,13 @@ export default function Home() {
         <div className="flex gap-4 sm:gap-6 items-center">
           <button 
             onClick={() => setCurrentRoute('home')}
-            className={`flex items-center gap-2 text-sm font-semibold transition-colors duration-300 ${currentRoute === 'home' ? 'text-indigo-600 dark:text-emerald-400 drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-emerald-200'}`}
+            className={`flex items-center gap-2 text-sm font-semibold transition-colors duration-300 ${currentRoute === 'home' ? 'text-emerald-600 dark:text-emerald-400 drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-emerald-200'}`}
           >
             <HomeIcon className="w-4 h-4" /> <span className="hidden sm:inline">Buscar</span>
           </button>
           <button 
             onClick={() => setCurrentRoute('fontes')}
-            className={`flex items-center gap-2 text-sm font-semibold transition-colors duration-300 border-slate-200 dark:border-white/10 pr-0 sm:pr-2 ${currentRoute === 'fontes' ? 'text-indigo-600 dark:text-emerald-400 drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-emerald-200'}`}
+            className={`flex items-center gap-2 text-sm font-semibold transition-colors duration-300 border-slate-200 dark:border-white/10 pr-0 sm:pr-2 ${currentRoute === 'fontes' ? 'text-emerald-600 dark:text-emerald-400 drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-emerald-200'}`}
           >
             <Layers className="w-4 h-4" /> <span className="hidden sm:inline">Diagnóstico</span>
           </button>
@@ -284,9 +284,9 @@ export default function Home() {
         <div className={`w-full max-w-4xl mx-auto flex flex-col items-center transition-all duration-1000 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${results || isLoading ? 'mb-12 scale-[0.98] opacity-90' : 'mb-0 scale-100 opacity-100'}`}>
           <div className="flex flex-col items-center gap-6 mb-12 animate-fade-in group">
             <div className="relative">
-              <div className="absolute inset-0 bg-indigo-200 dark:bg-emerald-500 blur-2xl opacity-40 dark:opacity-20 group-hover:opacity-70 dark:group-hover:opacity-40 transition-opacity duration-700 rounded-full"></div>
-              <div className="w-20 h-20 rounded-3xl premium-border bg-white dark:bg-[#050505] flex items-center justify-center shadow-xl shadow-indigo-100 dark:shadow-[0_0_30px_rgba(16,185,129,0.15)] group-hover:-translate-y-1 transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] relative z-10 border border-slate-100 dark:border-white/5">
-                <SearchIcon className="w-10 h-10 text-indigo-500 dark:text-emerald-400" />
+              <div className="absolute inset-0 bg-emerald-200 dark:bg-emerald-500 blur-2xl opacity-40 dark:opacity-20 group-hover:opacity-70 dark:group-hover:opacity-40 transition-opacity duration-700 rounded-full"></div>
+              <div className="w-20 h-20 rounded-3xl premium-border bg-white dark:bg-[#050505] flex items-center justify-center shadow-xl shadow-emerald-100 dark:shadow-[0_0_30px_rgba(16,185,129,0.15)] group-hover:-translate-y-1 transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] relative z-10 border border-slate-100 dark:border-white/5">
+                <SearchIcon className="w-10 h-10 text-emerald-500 dark:text-emerald-400" />
               </div>
             </div>
             <div className="text-center space-y-4">
@@ -294,7 +294,7 @@ export default function Home() {
                 Widicom
               </h1>
               <p className="text-slate-500 dark:text-slate-300 font-medium text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
-                Descubra <span className="text-indigo-600 dark:text-emerald-400 font-semibold drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]">softwares perdidos, mídias e arquivos obscuros</span> fragmentados pela rede.
+                Descubra <span className="text-emerald-600 dark:text-emerald-400 font-semibold drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]">softwares perdidos, mídias e arquivos obscuros</span> fragmentados pela rede.
               </p>
             </div>
           </div>
@@ -312,7 +312,7 @@ export default function Home() {
              <button 
                  type="button"
                  onClick={() => { setSearchMode('quick'); if (currentQuery.trim()) handleSearch(currentQuery.trim(), 1, 'quick'); }}
-                 className={`flex items-center gap-2 cursor-pointer px-4 pt-2.5 pb-2 rounded-full border transition-all duration-300 select-none focus:outline-none ${searchMode === 'quick' ? 'bg-indigo-50/80 dark:bg-emerald-500/10 border-indigo-200 dark:border-emerald-500/50 text-indigo-700 dark:text-emerald-300 shadow-sm' : 'bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:border-slate-300 dark:hover:border-white/20'}`}
+                 className={`flex items-center gap-2 cursor-pointer px-4 pt-2.5 pb-2 rounded-full border transition-all duration-300 select-none focus:outline-none ${searchMode === 'quick' ? 'bg-emerald-50/80 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/50 text-emerald-700 dark:text-emerald-300 shadow-sm' : 'bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:border-slate-300 dark:hover:border-white/20'}`}
              >
                  <Zap className={`w-4 h-4 ${searchMode === 'quick' ? 'text-amber-500 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`} />
                  <span className="font-semibold text-sm drop-shadow-sm">Busca Rápida (5s)</span>
@@ -339,7 +339,7 @@ export default function Home() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200/60 dark:border-white/10">
               <div>
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-emerald-50 tracking-tight">
-                  Resultados para <span className="text-indigo-600 dark:text-emerald-400">"{lastQuery}"</span>
+                  Resultados para <span className="text-emerald-600 dark:text-emerald-400">"{lastQuery}"</span>
                 </h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">
                   {results.total_resultados_nesta_pagina} registros ordenados. Página {results.pagina_atual}.
@@ -358,7 +358,7 @@ export default function Home() {
                     onClick={() => setActivePlatformFilter('all')}
                     className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
                       activePlatformFilter === 'all' 
-                        ? 'bg-indigo-600 dark:bg-emerald-600 text-white shadow-md shadow-indigo-600/20 dark:shadow-emerald-600/20' 
+                        ? 'bg-emerald-600 dark:bg-emerald-600 text-white shadow-md shadow-emerald-600/20 dark:shadow-emerald-600/20' 
                         : 'bg-white dark:bg-transparent border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 shadow-sm dark:shadow-[0_2px_10px_rgba(0,0,0,0.5)]'
                     }`}
                   >
@@ -371,7 +371,7 @@ export default function Home() {
                       onClick={() => setActivePlatformFilter(platform)}
                       className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
                         activePlatformFilter === platform 
-                          ? 'bg-indigo-600 dark:bg-emerald-600 text-white shadow-md shadow-indigo-600/20 dark:shadow-emerald-600/20' 
+                          ? 'bg-emerald-600 dark:bg-emerald-600 text-white shadow-md shadow-emerald-600/20 dark:shadow-emerald-600/20' 
                           : 'bg-white dark:bg-transparent border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 shadow-sm dark:shadow-[0_2px_10px_rgba(0,0,0,0.5)]'
                       }`}
                     >

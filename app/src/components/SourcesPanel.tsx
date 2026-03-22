@@ -41,7 +41,7 @@ export default function SourcesPanel() {
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
         <div>
           <h2 className="text-3xl font-extrabold text-slate-900 dark:text-emerald-300 tracking-tight flex items-center gap-3">
-            <Layers className="text-indigo-600 dark:text-emerald-400 w-8 h-8" />
+            <Layers className="text-emerald-600 dark:text-emerald-400 w-8 h-8" />
             Checar fontes Onlines
           </h2>
           <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
@@ -51,7 +51,7 @@ export default function SourcesPanel() {
         <button
           onClick={handleTestSources}
           disabled={isTesting}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 dark:bg-emerald-600 hover:bg-indigo-700 dark:hover:bg-emerald-500 text-white font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-indigo-600/20 dark:shadow-[0_4px_30px_rgba(16,185,129,0.3)]"
+          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 dark:bg-emerald-600 hover:bg-emerald-700 dark:hover:bg-emerald-500 text-white font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-emerald-600/20 dark:shadow-[0_4px_30px_rgba(16,185,129,0.3)]"
         >
           <RefreshCw className={`w-5 h-5 ${isTesting ? 'animate-spin' : ''}`} />
           {isTesting ? 'Testando Protocolos...' : 'Executar Diagnóstico'}
@@ -63,21 +63,21 @@ export default function SourcesPanel() {
           {/* Total Pesquisas */}
           <div className="glass-card premium-border rounded-[24px] p-8 flex flex-col relative overflow-hidden group hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] bg-white dark:bg-[#050505]">
             <div className="absolute top-0 right-0 p-6 opacity-[0.03] dark:opacity-5 group-hover:opacity-10 dark:group-hover:opacity-15 group-hover:scale-110 transition-all duration-700">
-              <Database className="w-24 h-24 text-indigo-600 dark:text-emerald-500" />
+              <Database className="w-24 h-24 text-emerald-600 dark:text-emerald-500" />
             </div>
-            <p className="text-xs font-bold text-indigo-600 dark:text-emerald-400 mb-2 uppercase tracking-widest">Total de Pesquisas</p>
+            <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mb-2 uppercase tracking-widest">Total de Pesquisas</p>
             <h3 className="text-5xl font-display font-black text-slate-900 dark:text-emerald-50 tracking-tighter drop-shadow-sm">{stats.totalSearches.toLocaleString()}</h3>
-            <p className="text-xs text-slate-500 dark:text-white/40 mt-4 font-semibold line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-emerald-300 transition-colors">Consultas globais no sistema</p>
+            <p className="text-xs text-slate-500 dark:text-white/40 mt-4 font-semibold line-clamp-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors">Consultas globais no sistema</p>
           </div>
           
           {/* Total Fontes */}
           <div className="glass-card premium-border rounded-[24px] p-8 flex flex-col relative overflow-hidden group hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] bg-white dark:bg-[#050505]">
             <div className="absolute top-0 right-0 p-6 opacity-[0.03] dark:opacity-5 group-hover:opacity-10 dark:group-hover:opacity-15 group-hover:scale-110 transition-all duration-700">
-              <Layers className="w-24 h-24 text-violet-600 dark:text-emerald-600" />
+              <Layers className="w-24 h-24 text-emerald-600 dark:text-emerald-600" />
             </div>
-            <p className="text-xs font-bold text-violet-600 dark:text-violet-400 mb-2 uppercase tracking-widest">Fontes de Dados</p>
+            <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mb-2 uppercase tracking-widest">Fontes de Dados</p>
             <h3 className="text-5xl font-display font-black text-slate-900 dark:text-emerald-50 tracking-tighter drop-shadow-sm">{stats.totalSources}</h3>
-            <p className="text-xs text-slate-500 dark:text-white/40 mt-4 font-semibold line-clamp-1 group-hover:text-violet-600 dark:group-hover:text-violet-300 transition-colors">Repositórios integrados</p>
+            <p className="text-xs text-slate-500 dark:text-white/40 mt-4 font-semibold line-clamp-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors">Repositórios integrados</p>
           </div>
 
           {/* Cobertura */}
@@ -122,7 +122,7 @@ export default function SourcesPanel() {
 
       {!hasTested && !isTesting && (
         <div className="glass-card bg-white/50 dark:bg-black/40 rounded-[32px] p-16 text-center flex flex-col items-center justify-center border-dashed border-2 border-slate-300 dark:border-white/10">
-          <Zap className="w-16 h-16 text-indigo-200 dark:text-white/20 mb-6" />
+          <Zap className="w-16 h-16 text-emerald-200 dark:text-white/20 mb-6" />
           <h3 className="text-2xl text-slate-800 dark:text-emerald-50 font-bold">Nenhuma checagem rodou ainda</h3>
           <p className="text-slate-500 dark:text-white/40 mt-3 font-medium">Clique no botão acima para testar todos os endpoints em tempo real.</p>
         </div>
@@ -149,7 +149,7 @@ export default function SourcesPanel() {
                 style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'forwards' }}
               >
                 <div className="flex justify-between items-start mb-4">
-                  <h4 className="text-lg font-bold text-slate-900 dark:text-emerald-50 group-hover:text-indigo-600 dark:group-hover:text-emerald-400 transition-colors">{source.name}</h4>
+                  <h4 className="text-lg font-bold text-slate-900 dark:text-emerald-50 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{source.name}</h4>
                   <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black uppercase tracking-wider border ${
                     isOnline ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/50' :
                     isBlocked ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800/50' :
