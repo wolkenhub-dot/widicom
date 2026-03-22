@@ -146,9 +146,7 @@ export default function Home() {
       ? results.resultados
       : results.resultados.filter(r => r.plataforma === activePlatformFilter))
     : [];
-
     : [];
-
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-black relative selection:bg-indigo-500/20 dark:selection:bg-emerald-500/30 text-slate-800 dark:text-emerald-50 transition-colors duration-500">
       
