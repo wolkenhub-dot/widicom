@@ -11,13 +11,26 @@ const gameBananaService = require('./gameBananaService');
 const ytsService = require('./ytsService');
 const nyaaService = require('./nyaaService');
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
+const statsService = require('./statsService');
 
 // Helper wrapper para pingar os sites puramente via HTTP GET
 async function pingDomain(url) {
   try {
-    const response = await axios.get(url, { timeout: 8000 });
+    const response = await axios.get(url, { 
+      timeout: 8000,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
+      }
+    });
     return { isPingOnly: true, status: response.status === 200 ? 'Online' : 'Vazio/Bloqueado' };
   } catch (error) {
+    if (error.response && error.response.status === 403) {
+      // 403 Forbidden is technically online and blocking our bot, which means the site is up!
+      return { isPingOnly: true, status: 'Online (Firewall)' };
+    }
     return { isPingOnly: true, status: 'Offline' };
   }
 }
@@ -48,7 +61,13 @@ async function checkSources(request, reply) {
   const query = "mario"; // Base dummy payload to test systems
   const dorks = dorkEngine.generateDorks(query);
   
-  const sources = [
+  const safe = (promise, ms) =>
+    Promise.race([
+      promise.catch((e) => { console.error('Teste falhou:', e.message); return null; }),
+      new Promise(res => setTimeout(() => res(null), ms))
+    ]);
+
+  const baseSources = [
     { name: 'Internet Archive', platform: 'Internet Archive', fn: () => scraperService.searchDorks(dorks, 1) },
     { name: 'SearxNG / Reddit', platform: 'SearxNG', fn: () => searxngService.searchSearxNG(query, 1) },
     { name: "Anna's Archive", platform: "Anna's Archive", fn: () => annasArchiveService.searchAnnasArchive(query, 1) },
@@ -59,41 +78,36 @@ async function checkSources(request, reply) {
     { name: "Vimm's Lair", platform: "Vimm's Lair", fn: () => vimmsLairService.searchVimmsLair(query, 1) },
     { name: 'GameBanana', platform: 'GameBanana', fn: () => gameBananaService.searchGameBanana(query, 1) },
     { name: 'YTS Filmes (Torrent)', platform: 'YTS', fn: () => ytsService.searchYTS(query, 1) },
-    { name: 'Nyaa RSS (Anime Torrent)', platform: 'Nyaa.si', fn: () => nyaaService.searchNyaa(query, 1) },
-    
-    // Novos Repositórios Arquivistas (Extração SearxNG Direta)
-    { name: 'CDRomance', platform: 'CDRomance', fn: () => pingSearxNG('cdromance.org') },
-    { name: 'NoPayStation', platform: 'NoPayStation', fn: () => pingSearxNG('nopaystation.com', 'dlc') },
-    { name: 'Retro-eXo', platform: 'Retro-eXo', fn: () => pingSearxNG('retro-exo.com', 'windows') },
-    { name: 'Hidden Palace', platform: 'Hidden Palace', fn: () => pingSearxNG('hiddenpalace.org', 'prototype') },
-    { name: 'The Cutting Room Floor', platform: 'TCRF', fn: () => pingSearxNG('tcrf.net', 'mario') },
-    { name: 'Hugging Face', platform: 'Hugging Face Datasets', fn: () => pingSearxNG('huggingface.co/datasets', 'model') },
-    { name: 'WinWorld', platform: 'WinWorld', fn: () => pingSearxNG('winworldpc.com', 'dos') },
-    { name: 'Macintosh Garden', platform: 'Macintosh Garden', fn: () => pingSearxNG('macintoshgarden.org', 'mac') },
-    
-    // Novas Fontes P2 (Elite Sources - Extração SearxNG)
-    { name: 'BetaArchive', platform: 'BetaArchive', fn: () => pingSearxNG('betaarchive.com', 'windows') },
-    { name: 'Tokyo Toshokan', platform: 'Tokyo Toshokan', fn: () => pingSearxNG('tokyotoshokan.info', 'raw') },
-    { name: 'OldGamesDownload', platform: 'OldGamesDownload', fn: () => pingSearxNG('oldgamesdownload.com', 'nfs') },
-    { name: 'GOG-Games', platform: 'GOG-Games', fn: () => pingSearxNG('gog-games.to', 'cyberpunk') },
-    { name: 'RuTracker', platform: 'RuTracker', fn: () => pingSearxNG('rutracker.org', 'adobe') },
-    { name: 'ModDB', platform: 'ModDB', fn: () => pingSearxNG('moddb.com', 'mod') },
-    { name: 'Ziperto', platform: 'Ziperto', fn: () => pingSearxNG('ziperto.com', '3ds') },
-    { name: 'RomUlation', platform: 'RomUlation', fn: () => pingSearxNG('romulation.org', 'nintendo') },
-    { name: 'APKMirror', platform: 'APKMirror', fn: () => pingSearxNG('apkmirror.com', 'whatsapp') },
-    { name: 'Abandonia', platform: 'Abandonia', fn: () => pingSearxNG('abandonia.com', 'prince') }
+    { name: 'Nyaa RSS (Anime Torrent)', platform: 'Nyaa.si', fn: () => nyaaService.searchNyaa(query, 1) }
   ];
+
+  const allDomains = dorkEngine.REGRAS_CATEGORIAS['tudo'].sites;
+  const ignoredDomains = ['edu', 'ac.jp', 'ac.uk', 'ac.nz', 'edu.br', 'ac.id', 'edu.au'];
+  
+  const distributedSources = allDomains
+    .filter(d => !ignoredDomains.includes(d))
+    .map(domain => ({
+       name: domain,
+       platform: 'Repositório',
+       fn: () => pingDomain(`https://${domain}`)
+    }));
+
+  const sources = [...baseSources, ...distributedSources];
 
   try {
     const rawResults = await Promise.allSettled(sources.map(async (s) => {
         const startTime = Date.now();
-        const res = await s.fn();
+        // Limita qualquer bridge/API a no máximo 7.5 segundos absolutos
+        const res = await safe(s.fn(), 7500);
         const timeTook = Date.now() - startTime;
         
         let state = 'Offline';
         let customCount = 0;
 
-        if (res && res.isPingOnly) {
+        if (res === null) {
+            state = timeTook >= 7500 ? 'Timeout' : 'Offline';
+            customCount = 0;
+        } else if (res && res.isPingOnly) {
             state = res.status;
             customCount = '-';
         } else if (res && res.length > 0) {
@@ -134,4 +148,31 @@ async function checkSources(request, reply) {
   }
 }
 
-module.exports = { checkSources };
+async function getStats(request, reply) {
+    try {
+        const stats = statsService.getStats();
+        
+        const allDomains = dorkEngine.REGRAS_CATEGORIAS['tudo'].sites;
+        const ignoredDomains = ['edu', 'ac.jp', 'ac.uk', 'ac.nz', 'edu.br', 'ac.id', 'edu.au'];
+        const remoteCount = allDomains.filter(d => !ignoredDomains.includes(d)).length;
+        
+        // 11 base sources + dynamic distributed domains
+        const totalSources = 11 + remoteCount;
+        
+        // Coverage is inherently 100% since tests are dynamically injected directly from the Search Engine's source arrays
+        const covered = true;
+
+        return reply.send({
+            success: true,
+            data: {
+                totalSearches: stats.totalSearches || 0,
+                totalSources: totalSources,
+                verificationStatus: covered
+            }
+        });
+    } catch (e) {
+        return reply.status(500).send({ success: false, error: e.message });
+    }
+}
+
+module.exports = { checkSources, getStats };

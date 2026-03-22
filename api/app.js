@@ -29,6 +29,11 @@ fastify.get('/', async (request, reply) => {
 fastify.get('/search', searchController.search);
 
 /**
+ * Rota para obter estatísticas globais e verificar integridade
+ */
+fastify.get('/stats', healthController.getStats);
+
+/**
  * Rota para verificar a integridade da conexão direta com todas as pontes API
  */
 fastify.get('/health/sources', healthController.checkSources);

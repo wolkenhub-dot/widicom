@@ -1,13 +1,18 @@
-import { useState } from 'react';
-import { Activity, ServerCrash, Zap, RefreshCw, Layers } from 'lucide-react';
-import { checkSourcesHealth } from '@/lib/api';
-import type { SourceHealth } from '@/lib/api';
+import { useState, useEffect } from 'react';
+import { Activity, ServerCrash, Zap, RefreshCw, Layers, Database, ShieldCheck, ShieldAlert, BarChart3 } from 'lucide-react';
+import { checkSourcesHealth, getSystemStats } from '@/lib/api';
+import type { SourceHealth, SystemStats } from '@/lib/api';
 import { toast } from 'sonner';
 
 export default function SourcesPanel() {
   const [sources, setSources] = useState<SourceHealth[]>([]);
   const [isTesting, setIsTesting] = useState(false);
   const [hasTested, setHasTested] = useState(false);
+  const [stats, setStats] = useState<SystemStats | null>(null);
+
+  useEffect(() => {
+    getSystemStats().then(setStats);
+  }, []);
 
   const handleTestSources = async () => {
     setIsTesting(true);
@@ -28,8 +33,13 @@ export default function SourcesPanel() {
     }
   };
 
+  const onlineCount = sources.filter(r => r.status.startsWith('Online')).length;
+  const offlineCount = hasTested ? sources.length - onlineCount : 0;
+  const onlinePerc = hasTested && sources.length > 0 ? Math.round((onlineCount / sources.length) * 100) : 0;
+  const offlinePerc = hasTested && sources.length > 0 ? 100 - onlinePerc : 0;
+
   return (
-    <div className="w-full max-w-6xl mx-auto py-12 px-4 animate-fade-in">
+    <div className="w-full max-w-7xl mx-auto py-12 px-4 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
         <div>
           <h2 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
@@ -50,6 +60,71 @@ export default function SourcesPanel() {
         </button>
       </div>
 
+      {stats && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 animate-fade-in">
+          {/* Total Pesquisas */}
+          <div className="glass-card rounded-2xl p-6 flex flex-col relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+              <Database className="w-16 h-16 text-indigo-400" />
+            </div>
+            <p className="text-sm font-semibold text-indigo-400 mb-1 uppercase tracking-wider">Total de Pesquisas</p>
+            <h3 className="text-4xl font-black text-white">{stats.totalSearches.toLocaleString()}</h3>
+            <p className="text-xs text-slate-500 mt-2 font-medium line-clamp-1">Consultas globais no sistema</p>
+          </div>
+          
+          {/* Total Fontes */}
+          <div className="glass-card rounded-2xl p-6 flex flex-col relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+              <Layers className="w-16 h-16 text-violet-400" />
+            </div>
+            <p className="text-sm font-semibold text-violet-400 mb-1 uppercase tracking-wider">Fontes de Dados</p>
+            <h3 className="text-4xl font-black text-white">{stats.totalSources}</h3>
+            <p className="text-xs text-slate-500 mt-2 font-medium line-clamp-1">Repositórios integrados</p>
+          </div>
+
+          {/* Cobertura */}
+          <div className="glass-card rounded-2xl p-6 flex flex-col relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+              {stats.verificationStatus ? <ShieldCheck className="w-16 h-16 text-sky-400" /> : <ShieldAlert className="w-16 h-16 text-amber-400" />}
+            </div>
+            <p className={`text-sm font-semibold mb-1 uppercase tracking-wider ${stats.verificationStatus ? 'text-sky-400' : 'text-amber-400'}`}>
+              Cobertura Base
+            </p>
+            <h3 className="text-4xl font-black text-white">{stats.verificationStatus ? '100%' : 'Alerta'}</h3>
+            <p className="text-xs text-slate-500 mt-2 font-medium line-clamp-1">
+              {stats.verificationStatus ? 'Todas APIs mapeadas' : 'Fontes não testadas'}
+            </p>
+          </div>
+
+          {/* Saúde da Rede (Live % Online) */}
+          <div className="glass-card rounded-2xl p-6 flex flex-col relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+              <BarChart3 className="w-16 h-16 text-emerald-400" />
+            </div>
+            <p className="text-sm font-semibold text-emerald-400 mb-1 uppercase tracking-wider">Rede Ativa</p>
+            {hasTested ? (
+              <>
+                <div className="flex items-baseline gap-2">
+                  <h3 className="text-4xl font-black text-white">{onlinePerc}% <span className="text-sm text-slate-400">({onlineCount})</span></h3>
+                  <span className="text-xs font-bold text-emerald-400 uppercase">On</span>
+                  <span className="text-slate-500 mx-1">|</span>
+                  <h3 className="text-lg font-bold text-slate-300">{offlinePerc}% <span className="text-sm text-slate-400">({offlineCount})</span></h3>
+                  <span className="text-xs font-bold text-rose-400 uppercase">Off</span>
+                </div>
+                <div className="w-full h-1.5 bg-rose-500 rounded-full mt-3 flex shadow-inner overflow-hidden">
+                  <div className="bg-emerald-500 h-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" style={{ width: `${onlinePerc}%` }} />
+                </div>
+              </>
+            ) : (
+              <>
+                <h3 className="text-4xl font-black text-slate-400">?</h3>
+                <p className="text-xs text-slate-500 mt-2 font-medium">Execute para calcular</p>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {!hasTested && !isTesting && (
         <div className="glass-card rounded-2xl p-12 text-center flex flex-col items-center justify-center border-dashed border-2 border-slate-700/50">
           <Zap className="w-12 h-12 text-indigo-400/50 mb-4" />
@@ -69,7 +144,7 @@ export default function SourcesPanel() {
       {hasTested && !isTesting && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {sources.map((source, index) => {
-            const isOnline = source.status === 'Online';
+            const isOnline = source.status.startsWith('Online');
             const isBlocked = source.status === 'Vazio/Bloqueado' || source.status === 'Timeout';
             
             return (

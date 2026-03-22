@@ -8,6 +8,36 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
+// Cache para não sobrecarregar o open-slum.org
+let cachedMirrors = ['https://annas-archive.gs']; // Fallback fixo padrão
+let lastFetchTime = 0;
+
+async function getActiveMirrors() {
+  // Limita o fetch a 1 vez por hora (60 min)
+  if (Date.now() - lastFetchTime < 1000 * 60 * 60) {
+    return cachedMirrors; 
+  }
+
+  try {
+    const res = await axios.get('https://open-slum.org/', { timeout: 6000 });
+    // Extrator por Regex pegando o campo 'url' do payload injectado de React/Vue do dashboard
+    const regex = /['"]?url['"]?\s*:\s*['"](https:\/\/annas-archive\.[a-z]+)\/['"]/gi;
+    const matches = [...res.data.matchAll(regex)];
+    const urls = matches.map(m => m[1]);
+    
+    if (urls.length > 0) {
+      // Remove redundâncias se houver arrays duplicados no state interno da página
+      cachedMirrors = [...new Set(urls)];
+      lastFetchTime = Date.now();
+      console.log(`[annasArchiveService] Update de Mirrors via SLUM: ${cachedMirrors.join(', ')}`);
+    }
+  } catch (e) {
+    console.error('[annasArchiveService] Falha de sincronia SLUM:', e.message);
+  }
+  return cachedMirrors;
+}
+
+
 /**
  * Realiza a busca no Anna's Archive.
  * 
@@ -20,9 +50,12 @@ async function searchAnnasArchive(query, page = 1) {
   const timeoutId = setTimeout(() => controller.abort(), 10000);
 
   try {
+    const mirrors = await getActiveMirrors();
+    const baseUrl = mirrors[Math.floor(Math.random() * mirrors.length)];
+
     // Anna's Archive usa URLs no formato /search?q=...
-    // O scraper fará o fetching da página HTML
-    const url = `https://annas-archive.gs/search?q=${encodeURIComponent(query)}`;
+    // O scraper fará o fetching da página HTML dinamicamente através do mirror ativo
+    const url = `${baseUrl}/search?q=${encodeURIComponent(query)}`;
     
     const response = await axios.get(url, {
       headers: {
@@ -43,7 +76,7 @@ async function searchAnnasArchive(query, page = 1) {
       if (link && rawTitle) {
         results.push({
           title: rawTitle.length > 120 ? rawTitle.substring(0, 120) + '...' : rawTitle,
-          url: `https://annas-archive.org${link}`,
+          url: `${baseUrl}${link}`,
           platform: 'Anna\'s Archive'
         });
       }

@@ -106,8 +106,32 @@ export async function checkSourcesHealth(): Promise<SourceHealth[]> {
     
     const data = await response.json();
     return data.data || [];
-  } catch (error) {
+} catch (error) {
     throw new Error('Erro de conexão no diagnóstico.');
   }
 }
 
+export interface SystemStats {
+  totalSearches: number;
+  totalSources: number;
+  verificationStatus: boolean;
+}
+
+/**
+ * Obtém estatísticas globais do sistema.
+ */
+export async function getSystemStats(): Promise<SystemStats | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/stats`, {
+      method: 'GET',
+    });
+    
+    if (!response.ok) return null;
+    
+    const data = await response.json();
+    return data.data || null;
+  } catch (error) {
+    console.error('Falha ao obter as estatísticas do sistema.', error);
+    return null;
+  }
+}

@@ -139,7 +139,7 @@ const REGRAS_CATEGORIAS = {
       "mega.nz",
       "dropbox.com",
       "archive.org",
-      "project-gutenberg.org",
+      "gutenberg.org",
       "standardebooks.org",
       "openlibrary.org",
       "wikisource.org",
@@ -154,7 +154,7 @@ const REGRAS_CATEGORIAS = {
   "bibliotecas_digitais": {
     "description": "Bibliotecas digitais e acervos públicos",
     "sites": [
-      "project-gutenberg.org",
+      "gutenberg.org",
       "standardebooks.org",
       "openlibrary.org",
       "wikisource.org",
@@ -228,7 +228,7 @@ const REGRAS_CATEGORIAS = {
       "romulation.org",
       "edgeemu.net",
       "myrient.erista.me",
-      "project-gutenberg.org",
+      "gutenberg.org",
       "standardebooks.org",
       "openlibrary.org",
       "wikisource.org",
@@ -420,5 +420,6 @@ function generateODDorks(query) {
 module.exports = {
   generateDorks,
   generateODDorks,
-  parseQueryTerms
+  parseQueryTerms,
+  REGRAS_CATEGORIAS
 };

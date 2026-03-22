@@ -22,6 +22,7 @@ const linkResolver      = require('./linkResolver');
 const linkChecker       = require('./linkChecker');
 const relevanceEngine   = require('./relevanceEngine');
 const metadataService   = require('./metadataService');
+const statsService      = require('./statsService');
 
 async function search(request, reply) {
   const { query, mode = 'quick' } = request.query;
@@ -38,6 +39,8 @@ async function search(request, reply) {
   const startTime = Date.now();
 
   try {
+    statsService.incrementSearchCount();
+    
     const { termoPositivo, termosNegativos } = dorkEngine.parseQueryTerms(query);
     const positiveQuery = termoPositivo || query;
     const dorks = dorkEngine.generateDorks(query, 'tudo', mode);

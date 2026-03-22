@@ -1,4 +1,4 @@
-import { Download, ExternalLink, Activity, HardDrive, ShieldAlert, Cpu } from 'lucide-react';
+import { Download, ExternalLink, Activity, HardDrive, Cpu } from 'lucide-react';
 
 interface ResultCardProps {
   titulo: string;
