@@ -7,6 +7,7 @@
  */
 
 const dorkEngine        = require('./dorkEngine');
+const rromsScraper      = require('./rromsScraper');
 const scraperService    = require('./scraperService');
 const searxngService    = require('./searxngService');
 const annasArchiveService = require('./annasArchiveService');
@@ -52,8 +53,9 @@ async function search(request, reply) {
         new Promise(res => setTimeout(() => res([]), ms))
       ]);
 
-    // Fetch ONE page of results from all 11 sources in parallel
+    // Fetch ONE page of results from all 12 sources in parallel
     const fetchPage = (pg, timeoutMs) => Promise.all([
+      safe(rromsScraper.searchRRoms(positiveQuery),              timeoutMs),
       safe(scraperService.searchDorks(dorks, pg),                timeoutMs),
       safe(searxngService.searchSearxNG(positiveQuery, pg, mode), timeoutMs),
       safe(annasArchiveService.searchAnnasArchive(positiveQuery, pg), timeoutMs),
@@ -86,24 +88,24 @@ async function search(request, reply) {
           res(null);
         }, budget))
       ]) || await Promise.allSettled(pagePromises).then(results =>
-        results.map(r => r.status === 'fulfilled' ? r.value : Array(11).fill([]))
+        results.map(r => r.status === 'fulfilled' ? r.value : Array(12).fill([]))
       );
 
       // Merge: combine each source's results across all pages
-      combined = Array(11).fill(null).map((_, sourceIdx) =>
+      combined = Array(12).fill(null).map((_, sourceIdx) =>
         allPages.flatMap(pageResult => Array.isArray(pageResult) ? (pageResult[sourceIdx] || []) : [])
       );
     }
 
-    // Destructure the 11 sources (order matches fetchPage)
+    // Destructure the 12 sources (order matches fetchPage)
     const [
-      archiveResults, searxngResults, annasResults, odResults, githubResults,
+      rromsResults, archiveResults, searxngResults, annasResults, odResults, githubResults,
       openLibraryResults, torrentResults, vimmsResults, gbResults, ytsResults, nyaaResults
     ] = combined;
 
     // Merge all sources
     let searchResults = [
-      ...searxngResults, ...archiveResults, ...annasResults, ...odResults,
+      ...rromsResults, ...searxngResults, ...archiveResults, ...annasResults, ...odResults,
       ...githubResults, ...openLibraryResults, ...torrentResults,
       ...vimmsResults, ...gbResults, ...ytsResults, ...nyaaResults
     ];

@@ -29,7 +29,11 @@ export default function ResultCard({
   const isTorrent = titulo.includes('Seeds:') || url_original.startsWith('magnet:');
   
   const downloadLink = url_download_direto || url_original;
-  const isEmulable = downloadLink.toLowerCase().endsWith('.zip');
+  
+  // Relaxed detection: checks if URL contains .zip, or if it's an Internet Archive/Megathread CDN RAW payload
+  const isArchiveOrg = downloadLink.toLowerCase().includes('archive.org/download/');
+  const isMyrient = downloadLink.toLowerCase().includes('myrient.erista.me');
+  const isEmulable = downloadLink.toLowerCase().includes('.zip') || titulo.toLowerCase().includes('.zip') || isArchiveOrg || isMyrient;
 
   return (
     <div className="bg-white dark:bg-[#050505] rounded-[24px] p-6 flex flex-col h-full hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_20px_40px_-10px_rgba(16,185,129,0.15)] border border-slate-200/60 dark:border-white/5 transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group overflow-hidden relative">

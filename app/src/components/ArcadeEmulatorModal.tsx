@@ -30,11 +30,16 @@ export default function ArcadeEmulatorModal({ romUrl, onClose }: ArcadeEmulatorM
       try {
         setLoadingMsg('BAIXANDO ROM PARA A MEMÓRIA RAM (EVITANDO DISCO LOCAL)...');
         
-        // 1. Attempt direct fetch (Fast, avoids our server bandwidth)
-        let response = await fetch(romUrl);
-        
-        // 2. If CORS blocks or fails, fallback to Widicom secure Proxy
-        if (!response.ok || response.type === 'opaque') {
+        let response;
+
+        try {
+           // 1. Attempt direct fetch (Fast, avoids our server bandwidth)
+           response = await fetch(romUrl);
+           if (!response.ok || response.type === 'opaque') {
+               throw new Error('Direct fetch constrained by CORS or Header rules');
+           }
+        } catch (_) {
+           // 2. If CORS blocks or fails, fallback to Widicom secure Proxy
            setLoadingMsg('BLOQUEIO CORS DETECTADO. ROTEANDO VIA WIDICOM PROXY SECURE...');
            response = await fetch(`${API_BASE_URL}/proxy?url=${encodeURIComponent(romUrl)}`);
            if (!response.ok) throw new Error('Proxy HTTP Erro ' + response.status);
