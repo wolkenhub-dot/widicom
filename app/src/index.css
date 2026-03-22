@@ -43,18 +43,25 @@
     transition: opacity 0.5s ease;
   }
 
-  /* Matrix / Hacker Dark Mode Theme */
+  /* Ultra-Modern Futuristic Dark Mode Theme */
   .dark {
-    --background: #030704; /* Very deep green-black */
-    --foreground: #f0fdf4; /* Light green-white */
+    --background: #000000; /* True Black */
+    --foreground: #f8fafc; /* Crisp white */
   }
 
-  /* Dark mode background ambient */
+  /* Dark mode background ambient - Cyber/Futuristic glowing orbs + subtle grid */
   .dark body::after {
     background: 
-      radial-gradient(circle at 15% 20%, rgba(16, 185, 129, 0.04) 0%, transparent 25%),
-      radial-gradient(circle at 85% 85%, rgba(5, 150, 105, 0.03) 0%, transparent 30%),
-      radial-gradient(circle at 50% 50%, rgba(4, 120, 87, 0.02) 0%, transparent 35%);
+      radial-gradient(circle at 15% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 85% 100%, rgba(56, 189, 248, 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.03) 0%, transparent 50%);
+    background-image: 
+      radial-gradient(circle at 15% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 85% 100%, rgba(56, 189, 248, 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.03) 0%, transparent 50%),
+      linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
   }
   
   h1, h2, h3, h4, .font-display {
@@ -72,23 +79,23 @@
     border-radius: 10px;
   }
   .dark ::-webkit-scrollbar-thumb {
-    background: rgba(16, 185, 129, 0.2);
+    background: rgba(255, 255, 255, 0.1);
   }
   ::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.25);
   }
   .dark ::-webkit-scrollbar-thumb:hover {
-    background: rgba(16, 185, 129, 0.4);
+    background: rgba(255, 255, 255, 0.2);
   }
 }
 
 @layer utilities {
   .glass-card {
-    @apply bg-white/70 backdrop-blur-2xl border border-white/50 dark:bg-[#070b08]/80 dark:border-emerald-900/30 dark:shadow-[inset_0_1px_0_0_rgba(16,185,129,0.1)];
+    @apply bg-white/70 backdrop-blur-2xl border border-white/50 dark:bg-[#050505]/60 dark:backdrop-blur-3xl dark:border-white/5 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)];
     box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.04), 0 20px 40px -10px rgba(0, 0, 0, 0.02), inset 0 1px 0 0 rgba(255,255,255,0.8);
   }
   .glass-input {
-    @apply bg-white/90 backdrop-blur-2xl border border-slate-200/60 focus:outline-none focus:bg-white transition-all dark:bg-[#090e0a]/90 dark:border-emerald-900/40 dark:text-emerald-50 dark:focus:bg-[#0c140d];
+    @apply bg-white/90 backdrop-blur-2xl border border-slate-200/60 focus:outline-none focus:bg-white transition-all dark:bg-[#0a0a0a]/80 dark:border-white/10 dark:text-white dark:focus:bg-black dark:focus:border-emerald-500/50 dark:backdrop-blur-3xl;
     box-shadow: 0 2px 10px -2px rgba(0,0,0,0.02), inset 0 2px 4px rgba(0,0,0,0.01);
   }
   .premium-border {
@@ -107,7 +114,7 @@
     pointer-events: none;
   }
   .dark .premium-border::before {
-    background: linear-gradient(to bottom right, rgba(16,185,129,0.3), rgba(16,185,129,0.05) 60%);
+    background: linear-gradient(to bottom right, rgba(255,255,255,0.15), rgba(255,255,255,0.02) 60%);
   }
 }
 

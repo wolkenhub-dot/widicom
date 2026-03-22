@@ -141,10 +141,10 @@ export default function Home() {
     <div className="min-h-screen bg-transparent relative selection:bg-indigo-500/20 dark:selection:bg-emerald-500/30 text-slate-800 dark:text-emerald-50 transition-colors duration-500">
       
       {/* Navbar Minimalista (State Router) */}
-      <nav className="fixed top-0 left-0 w-full z-50 bg-white/70 dark:bg-[#050805]/80 backdrop-blur-2xl border-b border-slate-200/50 dark:border-emerald-900/30 py-4 px-4 sm:px-8 flex justify-between items-center animate-fade-in shadow-sm dark:shadow-[0_4px_30px_rgba(0,0,0,0.5)] transition-colors duration-500">
+      <nav className="fixed top-0 left-0 w-full z-50 bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-b border-slate-200/50 dark:border-white/5 py-4 px-4 sm:px-8 flex justify-between items-center animate-fade-in shadow-sm dark:shadow-[0_4px_30px_rgba(0,0,0,0.8)] transition-colors duration-500">
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setCurrentRoute('home')}>
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 dark:from-emerald-500 dark:to-teal-600 p-[1px] shadow-sm shadow-indigo-500/20 dark:shadow-emerald-500/20 group-hover:scale-105 transition-transform duration-500">
-            <div className="w-full h-full bg-white dark:bg-[#070b08] backdrop-blur-sm rounded-[11px] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 dark:from-emerald-400 dark:to-cyan-500 p-[1px] shadow-sm shadow-indigo-500/20 dark:shadow-emerald-500/20 group-hover:scale-105 transition-transform duration-500">
+            <div className="w-full h-full bg-white dark:bg-black backdrop-blur-sm rounded-[11px] flex items-center justify-center">
               <SearchIcon className="w-4 h-4 text-indigo-600 dark:text-emerald-400" />
             </div>
           </div>
@@ -202,8 +202,8 @@ export default function Home() {
           <div className="flex flex-col items-center gap-6 mb-12 animate-fade-in group">
             <div className="relative">
               <div className="absolute inset-0 bg-indigo-200 dark:bg-emerald-500 blur-2xl opacity-40 dark:opacity-20 group-hover:opacity-70 dark:group-hover:opacity-40 transition-opacity duration-700 rounded-full"></div>
-              <div className="w-20 h-20 rounded-3xl premium-border bg-white dark:bg-[#070b08] flex items-center justify-center shadow-xl shadow-indigo-100 dark:shadow-[0_0_30px_rgba(16,185,129,0.1)] group-hover:-translate-y-1 transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] relative z-10 border border-slate-100 dark:border-emerald-900/30">
-                <SearchIcon className="w-10 h-10 text-indigo-500 dark:text-emerald-500" />
+              <div className="w-20 h-20 rounded-3xl premium-border bg-white dark:bg-[#050505] flex items-center justify-center shadow-xl shadow-indigo-100 dark:shadow-[0_0_30px_rgba(16,185,129,0.15)] group-hover:-translate-y-1 transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] relative z-10 border border-slate-100 dark:border-white/5">
+                <SearchIcon className="w-10 h-10 text-indigo-500 dark:text-emerald-400" />
               </div>
             </div>
             <div className="text-center space-y-4">
@@ -309,12 +309,12 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-24 text-center animate-fade-in bg-white/50 dark:bg-[#070b08]/50 rounded-3xl border border-slate-200/50 dark:border-emerald-900/30 backdrop-blur-sm">
-                <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-emerald-900/20 flex items-center justify-center mb-4">
-                  <SearchIcon className="w-8 h-8 text-slate-400 dark:text-emerald-700" />
+              <div className="flex flex-col items-center justify-center py-24 text-center animate-fade-in bg-white/50 dark:bg-black/40 rounded-3xl border border-slate-200/50 dark:border-white/5 backdrop-blur-sm">
+                <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center mb-4">
+                  <SearchIcon className="w-8 h-8 text-slate-400 dark:text-white/40" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-800 dark:text-emerald-100">Nenhuma mídia encontrada na aba selecionada.</h3>
-                <p className="text-slate-500 dark:text-emerald-900/60 mt-2 font-medium">Altere o filtro ou tente novos termos de busca.</p>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-emerald-50">Nenhuma mídia encontrada na aba selecionada.</h3>
+                <p className="text-slate-500 dark:text-white/40 mt-2 font-medium">Altere o filtro ou tente novos termos de busca.</p>
               </div>
             )}
             
@@ -324,20 +324,20 @@ export default function Home() {
                 <button
                   onClick={handlePrevPage}
                   disabled={currentPage <= 1 || isLoading}
-                  className="p-3 rounded-2xl bg-white dark:bg-[#070b08] border border-slate-200 dark:border-emerald-900/40 shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-md hover:bg-slate-50 dark:hover:bg-emerald-900/20 disabled:opacity-50 disabled:hover:shadow-sm disabled:cursor-not-allowed text-slate-700 dark:text-emerald-400 transition-all cursor-pointer"
+                  className="p-3 rounded-2xl bg-white dark:bg-[#050505] border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] hover:shadow-md hover:bg-slate-50 dark:hover:bg-[#0a0a0a] disabled:opacity-50 disabled:cursor-not-allowed text-slate-700 dark:text-emerald-400 transition-all cursor-pointer"
                   aria-label="Página anterior"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
                 
-                <span className="text-sm font-semibold text-slate-700 dark:text-emerald-300 bg-white dark:bg-[#070b08] shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)] px-6 py-3 rounded-2xl border border-slate-200 dark:border-emerald-900/40">
+                <span className="text-sm font-semibold text-slate-700 dark:text-emerald-400 bg-white dark:bg-[#050505] shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] px-6 py-3 rounded-2xl border border-slate-200 dark:border-white/10">
                   Página {currentPage}
                 </span>
 
                 <button
                   onClick={handleNextPage}
                   disabled={results.total_resultados_nesta_pagina === 0 || isLoading}
-                  className="p-3 rounded-2xl bg-white dark:bg-[#070b08] border border-slate-200 dark:border-emerald-900/40 shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-md hover:bg-slate-50 dark:hover:bg-emerald-900/20 disabled:opacity-50 disabled:hover:shadow-sm disabled:cursor-not-allowed text-slate-700 dark:text-emerald-400 transition-all cursor-pointer"
+                  className="p-3 rounded-2xl bg-white dark:bg-[#050505] border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] hover:shadow-md hover:bg-slate-50 dark:hover:bg-[#0a0a0a] disabled:opacity-50 disabled:cursor-not-allowed text-slate-700 dark:text-emerald-400 transition-all cursor-pointer"
                   aria-label="Próxima página"
                 >
                   <ChevronRight className="w-5 h-5" />

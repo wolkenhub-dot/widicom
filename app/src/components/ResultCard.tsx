@@ -27,7 +27,7 @@ export default function ResultCard({
   const isTorrent = titulo.includes('Seeds:') || url_original.startsWith('magnet:');
 
   return (
-    <div className="bg-white dark:bg-[#070b08] rounded-[24px] p-6 flex flex-col h-full hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_20px_40px_-10px_rgba(16,185,129,0.15)] border border-slate-200/60 dark:border-emerald-900/30 transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group overflow-hidden relative">
+    <div className="bg-white dark:bg-[#050505] rounded-[24px] p-6 flex flex-col h-full hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_20px_40px_-10px_rgba(16,185,129,0.15)] border border-slate-200/60 dark:border-white/5 transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group overflow-hidden relative">
       
       {imageUrl && (
         <>
@@ -41,8 +41,8 @@ export default function ResultCard({
 
       {/* Platform & Status Row */}
       <div className="relative z-10 flex justify-between items-center mb-6">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] uppercase tracking-wider font-bold bg-slate-50 dark:bg-emerald-950/40 text-slate-600 dark:text-emerald-400/80 border border-slate-200/80 dark:border-emerald-900/50 group-hover:border-slate-300 dark:group-hover:border-emerald-700/50 transition-colors">
-          {isTorrent ? <HardDrive className="w-3.5 h-3.5 text-indigo-500 dark:text-emerald-500" /> : <Cpu className="w-3.5 h-3.5 text-indigo-500 dark:text-emerald-500" />}
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] uppercase tracking-wider font-bold bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-white/70 border border-slate-200/80 dark:border-white/10 group-hover:border-slate-300 dark:group-hover:border-white/20 transition-colors">
+          {isTorrent ? <HardDrive className="w-3.5 h-3.5 text-indigo-500 dark:text-emerald-400" /> : <Cpu className="w-3.5 h-3.5 text-indigo-500 dark:text-emerald-400" />}
           {plataforma}
         </span>
         <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] uppercase tracking-wider font-black border ${conf.bg} ${conf.color} ${conf.border}`}>
@@ -57,10 +57,10 @@ export default function ResultCard({
       </h3>
 
       {/* Actions */}
-      <div className="relative z-10 mt-auto flex gap-3 pt-5 border-t border-slate-100 dark:border-emerald-900/30">
+      <div className="relative z-10 mt-auto flex gap-3 pt-5 border-t border-slate-100 dark:border-white/5">
         <button
           onClick={() => window.open(url_original, '_blank')}
-          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs uppercase tracking-wider font-bold bg-slate-50 dark:bg-[#050805] hover:bg-slate-100 dark:hover:bg-emerald-900/30 text-slate-700 dark:text-emerald-500 border border-slate-200 dark:border-emerald-900/50 transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs uppercase tracking-wider font-bold bg-slate-50 dark:bg-black hover:bg-slate-100 dark:hover:bg-white/5 text-slate-700 dark:text-emerald-500 border border-slate-200 dark:border-white/10 transition-colors"
         >
           <ExternalLink className="w-3.5 h-3.5" />
           <span>Diretório</span>

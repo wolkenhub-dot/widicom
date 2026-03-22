@@ -63,41 +63,41 @@ export default function SourcesPanel() {
       {stats && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 animate-fade-in">
           {/* Total Pesquisas */}
-          <div className="glass-card premium-border rounded-[24px] p-8 flex flex-col relative overflow-hidden group hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] bg-white dark:bg-[#070b08]">
+          <div className="glass-card premium-border rounded-[24px] p-8 flex flex-col relative overflow-hidden group hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] bg-white dark:bg-[#050505]">
             <div className="absolute top-0 right-0 p-6 opacity-[0.03] dark:opacity-5 group-hover:opacity-10 dark:group-hover:opacity-15 group-hover:scale-110 transition-all duration-700">
               <Database className="w-24 h-24 text-indigo-600 dark:text-emerald-500" />
             </div>
-            <p className="text-xs font-bold text-indigo-600 dark:text-emerald-500 mb-2 uppercase tracking-widest">Total de Pesquisas</p>
+            <p className="text-xs font-bold text-indigo-600 dark:text-emerald-400 mb-2 uppercase tracking-widest">Total de Pesquisas</p>
             <h3 className="text-5xl font-display font-black text-slate-900 dark:text-emerald-50 tracking-tighter drop-shadow-sm">{stats.totalSearches.toLocaleString()}</h3>
-            <p className="text-xs text-slate-500 dark:text-emerald-900/60 mt-4 font-semibold line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-emerald-400 transition-colors">Consultas globais no sistema</p>
+            <p className="text-xs text-slate-500 dark:text-white/40 mt-4 font-semibold line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-emerald-300 transition-colors">Consultas globais no sistema</p>
           </div>
           
           {/* Total Fontes */}
-          <div className="glass-card premium-border rounded-[24px] p-8 flex flex-col relative overflow-hidden group hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] bg-white dark:bg-[#070b08]">
+          <div className="glass-card premium-border rounded-[24px] p-8 flex flex-col relative overflow-hidden group hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] bg-white dark:bg-[#050505]">
             <div className="absolute top-0 right-0 p-6 opacity-[0.03] dark:opacity-5 group-hover:opacity-10 dark:group-hover:opacity-15 group-hover:scale-110 transition-all duration-700">
               <Layers className="w-24 h-24 text-violet-600 dark:text-emerald-600" />
             </div>
-            <p className="text-xs font-bold text-violet-600 dark:text-emerald-600 mb-2 uppercase tracking-widest">Fontes de Dados</p>
+            <p className="text-xs font-bold text-violet-600 dark:text-violet-400 mb-2 uppercase tracking-widest">Fontes de Dados</p>
             <h3 className="text-5xl font-display font-black text-slate-900 dark:text-emerald-50 tracking-tighter drop-shadow-sm">{stats.totalSources}</h3>
-            <p className="text-xs text-slate-500 dark:text-emerald-900/60 mt-4 font-semibold line-clamp-1 group-hover:text-violet-600 dark:group-hover:text-emerald-400 transition-colors">Repositórios integrados</p>
+            <p className="text-xs text-slate-500 dark:text-white/40 mt-4 font-semibold line-clamp-1 group-hover:text-violet-600 dark:group-hover:text-violet-300 transition-colors">Repositórios integrados</p>
           </div>
 
           {/* Cobertura */}
-          <div className="glass-card premium-border rounded-[24px] p-8 flex flex-col relative overflow-hidden group hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] bg-white dark:bg-[#070b08]">
+          <div className="glass-card premium-border rounded-[24px] p-8 flex flex-col relative overflow-hidden group hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] bg-white dark:bg-[#050505]">
             <div className="absolute top-0 right-0 p-6 opacity-[0.03] dark:opacity-5 group-hover:opacity-10 dark:group-hover:opacity-15 group-hover:scale-110 transition-all duration-700">
               {stats.verificationStatus ? <ShieldCheck className="w-24 h-24 text-sky-500 dark:text-emerald-400" /> : <ShieldAlert className="w-24 h-24 text-amber-500" />}
             </div>
-            <p className={`text-xs font-bold mb-2 uppercase tracking-widest ${stats.verificationStatus ? 'text-sky-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-500'}`}>
+            <p className={`text-xs font-bold mb-2 uppercase tracking-widest ${stats.verificationStatus ? 'text-sky-600 dark:text-sky-400' : 'text-amber-600 dark:text-amber-500'}`}>
               Cobertura Base
             </p>
             <h3 className="text-5xl font-display font-black text-slate-900 dark:text-emerald-50 tracking-tighter drop-shadow-sm">{stats.verificationStatus ? '100%' : 'Alerta'}</h3>
-            <p className="text-xs text-slate-500 dark:text-emerald-900/60 mt-4 font-semibold line-clamp-1 group-hover:text-sky-600 dark:group-hover:text-emerald-400 transition-colors">
+            <p className="text-xs text-slate-500 dark:text-white/40 mt-4 font-semibold line-clamp-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">
               {stats.verificationStatus ? 'Todas APIs mapeadas' : 'Fontes não testadas'}
             </p>
           </div>
 
           {/* Saúde da Rede (Live % Online) */}
-          <div className="glass-card premium-border rounded-[24px] p-8 flex flex-col relative overflow-hidden group hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] bg-white dark:bg-[#070b08]">
+          <div className="glass-card premium-border rounded-[24px] p-8 flex flex-col relative overflow-hidden group hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] bg-white dark:bg-[#050505]">
             <div className="absolute top-0 right-0 p-6 opacity-[0.03] dark:opacity-5 group-hover:opacity-10 dark:group-hover:opacity-15 group-hover:scale-110 transition-all duration-700">
               <BarChart3 className="w-24 h-24 text-emerald-500" />
             </div>
@@ -123,10 +123,10 @@ export default function SourcesPanel() {
       )}
 
       {!hasTested && !isTesting && (
-        <div className="glass-card bg-white/50 dark:bg-emerald-950/10 rounded-[32px] p-16 text-center flex flex-col items-center justify-center border-dashed border-2 border-slate-300 dark:border-emerald-900/30">
-          <Zap className="w-16 h-16 text-indigo-200 dark:text-emerald-900/40 mb-6" />
+        <div className="glass-card bg-white/50 dark:bg-black/40 rounded-[32px] p-16 text-center flex flex-col items-center justify-center border-dashed border-2 border-slate-300 dark:border-white/10">
+          <Zap className="w-16 h-16 text-indigo-200 dark:text-white/20 mb-6" />
           <h3 className="text-2xl text-slate-800 dark:text-emerald-50 font-bold">Nenhuma checagem rodou ainda</h3>
-          <p className="text-slate-500 dark:text-emerald-900/60 mt-3 font-medium">Clique no botão acima para testar todos os endpoints em tempo real.</p>
+          <p className="text-slate-500 dark:text-white/40 mt-3 font-medium">Clique no botão acima para testar todos os endpoints em tempo real.</p>
         </div>
       )}
 
@@ -147,7 +147,7 @@ export default function SourcesPanel() {
             return (
               <div 
                 key={index} 
-                className="bg-white dark:bg-[#070b08] rounded-[24px] p-6 flex flex-col animate-slide-up opacity-0 hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_20px_40px_-10px_rgba(16,185,129,0.15)] border border-slate-200/60 dark:border-emerald-900/30 transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group relative overflow-hidden"
+                className="bg-white dark:bg-[#050505] rounded-[24px] p-6 flex flex-col animate-slide-up opacity-0 hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_20px_40px_-10px_rgba(16,185,129,0.15)] border border-slate-200/60 dark:border-white/5 transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group relative overflow-hidden"
                 style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'forwards' }}
               >
                 <div className="flex justify-between items-start mb-4">
@@ -162,15 +162,15 @@ export default function SourcesPanel() {
                   </span>
                 </div>
                 
-                <div className="mt-auto flex justify-between items-end border-t border-slate-100 dark:border-emerald-900/30 pt-5">
+                <div className="mt-auto flex justify-between items-end border-t border-slate-100 dark:border-white/5 pt-5">
                   <div>
-                    <p className="text-[10px] text-slate-400 dark:text-emerald-900/60 uppercase tracking-widest font-black">Objetos Extraídos</p>
-                    <p className="text-2xl font-black text-slate-800 dark:text-emerald-100 mt-1">{source.count}</p>
+                    <p className="text-[10px] text-slate-400 dark:text-white/40 uppercase tracking-widest font-black">Objetos Extraídos</p>
+                    <p className="text-2xl font-black text-slate-800 dark:text-emerald-50 mt-1">{source.count}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] text-slate-400 dark:text-emerald-900/60 uppercase tracking-widest font-black">Ping / Latência</p>
+                    <p className="text-[10px] text-slate-400 dark:text-white/40 uppercase tracking-widest font-black">Ping / Latência</p>
                     <p className={`text-xl font-bold mt-1 ${source.timeMs > 5000 ? 'text-amber-500 dark:text-amber-400' : 'text-emerald-500 dark:text-emerald-400'}`}>
-                      {source.timeMs} <span className="text-sm text-slate-400 dark:text-emerald-900/60">ms</span>
+                      {source.timeMs} <span className="text-sm text-slate-400 dark:text-white/40">ms</span>
                     </p>
                   </div>
                 </div>

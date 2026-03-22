@@ -43,7 +43,7 @@ export default function SearchBar({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={isLoading}
-          className="w-full py-5 pl-16 pr-16 text-xl tracking-tight rounded-full text-slate-900 dark:text-emerald-50 placeholder-slate-400 dark:placeholder-emerald-900/50 glass-input transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:bg-white dark:group-hover:bg-[#070b08] group-hover:shadow-[0_4px_30px_rgba(0,0,0,0.06)] dark:group-hover:shadow-[0_4px_30px_rgba(16,185,129,0.08)] focus:shadow-[0_8px_40px_rgba(99,102,241,0.15)] dark:focus:shadow-[0_8px_40px_rgba(16,185,129,0.2)] focus:scale-[1.01] border border-slate-200/50 dark:border-emerald-900/40"
+          className="w-full py-5 pl-16 pr-16 text-xl tracking-tight rounded-full text-slate-900 dark:text-emerald-50 placeholder-slate-400 dark:placeholder-white/40 glass-input transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:bg-white dark:group-hover:bg-black group-hover:shadow-[0_4px_30px_rgba(0,0,0,0.06)] dark:group-hover:shadow-[0_4px_30px_rgba(16,185,129,0.15)] focus:shadow-[0_8px_40px_rgba(99,102,241,0.15)] dark:focus:shadow-[0_8px_40px_rgba(16,185,129,0.25)] focus:scale-[1.01] border border-slate-200/50 dark:border-white/10"
         />
         
         {isLoading && (
