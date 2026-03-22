@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 
 export default function Home() {
   const [results, setResults] = useState<SearchResponse | null>(null);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isLoading, setIsLoading] = useState(false);
   const [apiAvailable, setApiAvailable] = useState(true);
   const [lastQuery, setLastQuery] = useState('');
@@ -25,6 +26,26 @@ export default function Home() {
       .then(available => setApiAvailable(available))
       .catch(() => setApiAvailable(false));
   }, []);
+
+  // Initialize theme from localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      if (savedTheme === 'dark') document.documentElement.classList.add('dark');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   const handleSearch = async (query: string, page: number = 1, modeOverride?: 'quick' | 'deep') => {
     setIsLoading(true);
@@ -117,69 +138,85 @@ export default function Home() {
     : [];
 
   return (
-    <div className="min-h-screen bg-transparent relative selection:bg-indigo-500/30 font-sans overflow-x-hidden text-slate-100">
+    <div className="min-h-screen bg-transparent relative selection:bg-indigo-500/20 dark:selection:bg-emerald-500/30 text-slate-800 dark:text-emerald-50 transition-colors duration-500">
       
       {/* Navbar Minimalista (State Router) */}
-      <nav className="fixed top-0 left-0 w-full z-50 bg-black/20 backdrop-blur-md border-b border-white/5 py-4 px-4 sm:px-8 flex justify-between items-center animate-fade-in shadow-xl">
+      <nav className="fixed top-0 left-0 w-full z-50 bg-white/70 dark:bg-[#050805]/80 backdrop-blur-2xl border-b border-slate-200/50 dark:border-emerald-900/30 py-4 px-4 sm:px-8 flex justify-between items-center animate-fade-in shadow-sm dark:shadow-[0_4px_30px_rgba(0,0,0,0.5)] transition-colors duration-500">
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setCurrentRoute('home')}>
-          <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-            <SearchIcon className="w-4 h-4 text-white" />
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 dark:from-emerald-500 dark:to-teal-600 p-[1px] shadow-sm shadow-indigo-500/20 dark:shadow-emerald-500/20 group-hover:scale-105 transition-transform duration-500">
+            <div className="w-full h-full bg-white dark:bg-[#070b08] backdrop-blur-sm rounded-[11px] flex items-center justify-center">
+              <SearchIcon className="w-4 h-4 text-indigo-600 dark:text-emerald-400" />
+            </div>
           </div>
-          <span className="font-extrabold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">Widicom</span>
+          <span className="font-display font-bold text-xl tracking-tight text-slate-900 dark:text-emerald-50">Widicom</span>
         </div>
-        <div className="flex gap-6">
+        <div className="flex gap-4 sm:gap-6 items-center">
           <button 
             onClick={() => setCurrentRoute('home')}
-            className={`flex items-center gap-2 text-sm font-semibold transition-colors ${currentRoute === 'home' ? 'text-indigo-400' : 'text-slate-400 hover:text-white'}`}
+            className={`flex items-center gap-2 text-sm font-semibold transition-colors duration-300 ${currentRoute === 'home' ? 'text-indigo-600 dark:text-emerald-400 drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'text-slate-500 dark:text-emerald-900/70 hover:text-slate-900 dark:hover:text-emerald-200'}`}
           >
             <HomeIcon className="w-4 h-4" /> <span className="hidden sm:inline">Buscar</span>
           </button>
           <button 
             onClick={() => setCurrentRoute('fontes')}
-            className={`flex items-center gap-2 text-sm font-semibold transition-colors ${currentRoute === 'fontes' ? 'text-indigo-400' : 'text-slate-400 hover:text-white'}`}
+            className={`flex items-center gap-2 text-sm font-semibold transition-colors duration-300 border-slate-200 dark:border-emerald-900/40 pr-0 sm:pr-2 ${currentRoute === 'fontes' ? 'text-indigo-600 dark:text-emerald-400 drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'text-slate-500 dark:text-emerald-900/70 hover:text-slate-900 dark:hover:text-emerald-200'}`}
           >
-            <Layers className="w-4 h-4" /> <span className="hidden sm:inline">Checar fontes Onlines</span>
+            <Layers className="w-4 h-4" /> <span className="hidden sm:inline">Diagnóstico</span>
+          </button>
+          
+          <div className="h-6 w-px bg-slate-200 dark:bg-emerald-900/50 mx-1 hidden sm:block"></div>
+          
+          <button
+            onClick={toggleTheme}
+            className="p-1 sm:p-2 rounded-full hover:bg-slate-100 dark:hover:bg-emerald-800/30 text-slate-500 dark:text-emerald-400 transition-colors"
+            title="Alternar Tema"
+          >
+            {theme === 'light' ? (
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            )}
           </button>
         </div>
       </nav>
-
-      {/* Decorative gradient orbs in background */}
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse-glow" />
       
       {!apiAvailable && (
-        <div className="fixed top-6 right-6 z-50 animate-slide-up">
-          <div className="glass-card bg-rose-500/10 border-rose-500/20 rounded-2xl p-4 flex items-center gap-4 shadow-2xl">
-            <AlertCircle className="w-6 h-6 text-rose-400" />
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 animate-slide-up">
+          <div className="glass-card bg-rose-50 rounded-2xl p-4 flex items-center gap-4 shadow-lg shadow-rose-500/10 border border-rose-100">
+            <AlertCircle className="w-6 h-6 text-rose-500 animate-pulse" />
             <div>
-              <p className="text-sm font-semibold text-rose-100">API Offline</p>
-              <p className="text-xs text-rose-300">O backend local não está respondendo.</p>
+              <p className="text-sm font-bold text-rose-900 tracking-wide uppercase">Downtime Detectado</p>
+              <p className="text-xs text-rose-600 mt-0.5">O motor central de extração não responde.</p>
             </div>
           </div>
         </div>
       )}
 
-      <div className="pt-20" />
+      <div className="pt-24" />
 
       {currentRoute === 'home' ? (
-        <main className={`container mx-auto px-4 sm:px-6 flex flex-col transition-all duration-700 ease-in-out ${!results && !isLoading ? 'min-h-[80vh] justify-center pb-24' : 'pt-8 pb-24'}`}>
+        <main className={`container mx-auto px-4 sm:px-6 flex flex-col transition-all duration-1000 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${!results && !isLoading ? 'min-h-[75vh] justify-center pb-24' : 'pt-8 pb-32'}`}>
         
         {/* Header & Main Search Region */}
-        <div className={`w-full max-w-4xl mx-auto flex flex-col items-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${results || isLoading ? 'mb-12 scale-95' : 'mb-0 scale-100'}`}>
-          <div className="flex flex-col items-center gap-6 mb-10 animate-fade-in group">
-            <div className="w-16 h-16 rounded-3xl bg-indigo-500 flex items-center justify-center shadow-xl shadow-indigo-500/20 group-hover:-translate-y-2 transition-all duration-300">
-              <SearchIcon className="w-8 h-8 text-white" />
+        <div className={`w-full max-w-4xl mx-auto flex flex-col items-center transition-all duration-1000 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${results || isLoading ? 'mb-12 scale-[0.98] opacity-90' : 'mb-0 scale-100 opacity-100'}`}>
+          <div className="flex flex-col items-center gap-6 mb-12 animate-fade-in group">
+            <div className="relative">
+              <div className="absolute inset-0 bg-indigo-200 dark:bg-emerald-500 blur-2xl opacity-40 dark:opacity-20 group-hover:opacity-70 dark:group-hover:opacity-40 transition-opacity duration-700 rounded-full"></div>
+              <div className="w-20 h-20 rounded-3xl premium-border bg-white dark:bg-[#070b08] flex items-center justify-center shadow-xl shadow-indigo-100 dark:shadow-[0_0_30px_rgba(16,185,129,0.1)] group-hover:-translate-y-1 transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] relative z-10 border border-slate-100 dark:border-emerald-900/30">
+                <SearchIcon className="w-10 h-10 text-indigo-500 dark:text-emerald-500" />
+              </div>
             </div>
-            <div className="text-center space-y-3">
-              <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-white via-indigo-100 to-indigo-400 select-none">
+            <div className="text-center space-y-4">
+              <h1 className="text-6xl md:text-8xl font-display font-bold tracking-tighter text-slate-900 dark:text-emerald-50 select-none drop-shadow-sm">
                 Widicom
               </h1>
-              <p className="text-slate-400 font-medium text-lg max-w-lg mx-auto">
-                O buscador definitivo focado em encontrar <span className="text-indigo-400">arquivos, mídias e conteúdos raros</span> escondidos pela internet.
+              <p className="text-slate-500 dark:text-emerald-900/80 font-medium text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
+                Descubra <span className="text-indigo-600 dark:text-emerald-400 font-semibold drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]">softwares perdidos, mídias e arquivos obscuros</span> fragmentados pela rede.
               </p>
             </div>
           </div>
           
-          <div className="w-full animate-slide-up" style={{ animationDelay: '100ms' }}>
+          <div className="w-full animate-slide-up" style={{ animationDelay: '50ms' }}>
             <SearchBar 
               query={currentQuery}
               onQueryChange={setCurrentQuery}
@@ -188,22 +225,22 @@ export default function Home() {
             />
           </div>
 
-          <div className="flex justify-center mt-2 mb-4 space-x-3 sm:space-x-4 animate-fade-in" style={{ animationDelay: '150ms' }}>
+          <div className="flex justify-center mt-3 mb-4 space-x-3 sm:space-x-4 animate-fade-in" style={{ animationDelay: '100ms' }}>
              <button 
                  type="button"
                  onClick={() => { setSearchMode('quick'); if (currentQuery.trim()) handleSearch(currentQuery.trim(), 1, 'quick'); }}
-                 className={`flex items-center gap-2 cursor-pointer px-4 py-2 rounded-full border shadow-sm transition-all select-none focus:outline-none ${searchMode === 'quick' ? 'bg-indigo-500/20 border-indigo-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:border-indigo-400'}`}
+                 className={`flex items-center gap-2 cursor-pointer px-4 pt-2.5 pb-2 rounded-full border transition-all duration-300 select-none focus:outline-none ${searchMode === 'quick' ? 'bg-indigo-50/80 dark:bg-emerald-500/10 border-indigo-200 dark:border-emerald-500/50 text-indigo-700 dark:text-emerald-300 shadow-sm' : 'bg-white dark:bg-transparent border-slate-200 dark:border-emerald-900/40 text-slate-600 dark:text-emerald-800/80 hover:bg-slate-50 dark:hover:bg-emerald-900/20 hover:border-slate-300 dark:hover:border-emerald-700/50'}`}
              >
-                 <Zap className={`w-4 h-4 ${searchMode === 'quick' ? 'text-amber-400' : 'text-slate-400'}`} />
-                 <span className="font-semibold text-sm drop-shadow-md">Busca Rápida (5s)</span>
+                 <Zap className={`w-4 h-4 ${searchMode === 'quick' ? 'text-amber-500 dark:text-emerald-400' : 'text-slate-400 dark:text-emerald-900/50'}`} />
+                 <span className="font-semibold text-sm drop-shadow-sm">Busca Rápida (5s)</span>
              </button>
              <button 
                  type="button"
                  onClick={() => { setSearchMode('deep'); if (currentQuery.trim()) handleSearch(currentQuery.trim(), 1, 'deep'); }}
-                 className={`flex items-center gap-2 cursor-pointer px-4 py-2 rounded-full border shadow-sm transition-all select-none focus:outline-none ${searchMode === 'deep' ? 'bg-indigo-500/20 border-indigo-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:border-indigo-400'}`}
+                 className={`flex items-center gap-2 cursor-pointer px-4 pt-2.5 pb-2 rounded-full border transition-all duration-300 select-none focus:outline-none ${searchMode === 'deep' ? 'bg-rose-50/80 dark:bg-emerald-500/10 border-rose-200 dark:border-emerald-500/50 text-rose-700 dark:text-emerald-300 shadow-sm' : 'bg-white dark:bg-transparent border-slate-200 dark:border-emerald-900/40 text-slate-600 dark:text-emerald-800/80 hover:bg-slate-50 dark:hover:bg-emerald-900/20 hover:border-slate-300 dark:hover:border-emerald-700/50'}`}
              >
-                 <Database className={`w-4 h-4 ${searchMode === 'deep' ? 'text-rose-400' : 'text-slate-400'}`} />
-                 <span className="font-semibold text-sm drop-shadow-md">Avaliação Profunda (60s)</span>
+                 <Database className={`w-4 h-4 ${searchMode === 'deep' ? 'text-rose-500 dark:text-emerald-400' : 'text-slate-400 dark:text-emerald-900/50'}`} />
+                 <span className="font-semibold text-sm drop-shadow-sm">Avaliação Profunda (60s)</span>
              </button>
           </div>
         </div>
@@ -213,23 +250,23 @@ export default function Home() {
 
         {/* Results Body */}
         {results && (
-          <div className="w-full max-w-6xl mx-auto animate-slide-up space-y-8" style={{ animationDelay: '200ms' }}>
+          <div className="w-full max-w-6xl mx-auto animate-slide-up space-y-8" style={{ animationDelay: '150ms' }}>
             
             {/* Header / Filter row */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/10">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200/60 dark:border-emerald-900/30">
               <div>
-                <h2 className="text-2xl font-bold text-white tracking-tight">
-                  Resultados para <span className="text-indigo-400">"{lastQuery}"</span>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-emerald-50 tracking-tight">
+                  Resultados para <span className="text-indigo-600 dark:text-emerald-400">"{lastQuery}"</span>
                 </h2>
-                <p className="text-sm text-slate-400 mt-2 font-medium">
-                  {results.total_resultados_nesta_pagina} registros ordenados via IA. Página {results.pagina_atual}.
+                <p className="text-sm text-slate-500 dark:text-emerald-900/60 mt-2 font-medium">
+                  {results.total_resultados_nesta_pagina} registros ordenados. Página {results.pagina_atual}.
                 </p>
               </div>
 
               {/* Dynamic Chips Filtering */}
               {availablePlatforms.length > 0 && (
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="flex items-center text-sm font-medium text-slate-400 mr-2">
+                  <span className="flex items-center text-sm font-medium text-slate-500 dark:text-emerald-900/60 mr-2">
                     <Filter className="w-4 h-4 mr-1.5" />
                     Fontes
                   </span>
@@ -238,8 +275,8 @@ export default function Home() {
                     onClick={() => setActivePlatformFilter('all')}
                     className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
                       activePlatformFilter === 'all' 
-                        ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25' 
-                        : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                        ? 'bg-indigo-600 dark:bg-emerald-600 text-white shadow-md shadow-indigo-600/20 dark:shadow-emerald-600/20' 
+                        : 'bg-white dark:bg-transparent border border-slate-200 dark:border-emerald-900/40 text-slate-600 dark:text-emerald-800/80 hover:bg-slate-50 dark:hover:bg-emerald-900/20 shadow-sm dark:shadow-none'
                     }`}
                   >
                     Global
@@ -251,11 +288,11 @@ export default function Home() {
                       onClick={() => setActivePlatformFilter(platform)}
                       className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
                         activePlatformFilter === platform 
-                          ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25' 
-                          : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                          ? 'bg-indigo-600 dark:bg-emerald-600 text-white shadow-md shadow-indigo-600/20 dark:shadow-emerald-600/20' 
+                          : 'bg-white dark:bg-transparent border border-slate-200 dark:border-emerald-900/40 text-slate-600 dark:text-emerald-800/80 hover:bg-slate-50 dark:hover:bg-emerald-900/20 shadow-sm dark:shadow-none'
                       }`}
                     >
-                      {platform} <span className="opacity-70 font-normal ml-1">({getPlatformDescription(platform)})</span>
+                      {platform} <span className="opacity-60 font-medium ml-1">({getPlatformDescription(platform)})</span>
                     </button>
                   ))}
                 </div>
@@ -266,16 +303,18 @@ export default function Home() {
             {filteredResults.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredResults.map((result, index) => (
-                  <div key={index} className="animate-slide-up opacity-0" style={{ animationDelay: `${(index * 50) + 300}ms` }}>
+                  <div key={index} className="animate-slide-up opacity-0" style={{ animationDelay: `${(index * 30) + 150}ms` }}>
                     <ResultCard {...result} />
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
-                <SearchIcon className="w-12 h-12 text-slate-600 mb-4" />
-                <h3 className="text-xl font-medium text-slate-300">Nenhuma mídia encontrada na aba selecionada.</h3>
-                <p className="text-slate-500 mt-2">Altere o filtro ou tente novos termos de busca.</p>
+              <div className="flex flex-col items-center justify-center py-24 text-center animate-fade-in bg-white/50 dark:bg-[#070b08]/50 rounded-3xl border border-slate-200/50 dark:border-emerald-900/30 backdrop-blur-sm">
+                <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-emerald-900/20 flex items-center justify-center mb-4">
+                  <SearchIcon className="w-8 h-8 text-slate-400 dark:text-emerald-700" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-emerald-100">Nenhuma mídia encontrada na aba selecionada.</h3>
+                <p className="text-slate-500 dark:text-emerald-900/60 mt-2 font-medium">Altere o filtro ou tente novos termos de busca.</p>
               </div>
             )}
             
@@ -285,20 +324,20 @@ export default function Home() {
                 <button
                   onClick={handlePrevPage}
                   disabled={currentPage <= 1 || isLoading}
-                  className="p-3 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-white/5 disabled:cursor-not-allowed text-white transition-all"
+                  className="p-3 rounded-2xl bg-white dark:bg-[#070b08] border border-slate-200 dark:border-emerald-900/40 shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-md hover:bg-slate-50 dark:hover:bg-emerald-900/20 disabled:opacity-50 disabled:hover:shadow-sm disabled:cursor-not-allowed text-slate-700 dark:text-emerald-400 transition-all cursor-pointer"
                   aria-label="Página anterior"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
                 
-                <span className="text-sm font-medium text-slate-400 bg-black/20 px-4 py-2 rounded-xl border border-white/5">
+                <span className="text-sm font-semibold text-slate-700 dark:text-emerald-300 bg-white dark:bg-[#070b08] shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)] px-6 py-3 rounded-2xl border border-slate-200 dark:border-emerald-900/40">
                   Página {currentPage}
                 </span>
 
                 <button
                   onClick={handleNextPage}
                   disabled={results.total_resultados_nesta_pagina === 0 || isLoading}
-                  className="p-3 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-white/5 disabled:cursor-not-allowed text-white transition-all"
+                  className="p-3 rounded-2xl bg-white dark:bg-[#070b08] border border-slate-200 dark:border-emerald-900/40 shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-md hover:bg-slate-50 dark:hover:bg-emerald-900/20 disabled:opacity-50 disabled:hover:shadow-sm disabled:cursor-not-allowed text-slate-700 dark:text-emerald-400 transition-all cursor-pointer"
                   aria-label="Próxima página"
                 >
                   <ChevronRight className="w-5 h-5" />
