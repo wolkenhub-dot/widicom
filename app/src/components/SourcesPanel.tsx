@@ -42,11 +42,11 @@ export default function SourcesPanel() {
     <div className="w-full max-w-7xl mx-auto py-12 px-4 animate-fade-in text-slate-800 dark:text-emerald-50">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
         <div>
-          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-emerald-400 tracking-tight flex items-center gap-3">
-            <Layers className="text-indigo-600 dark:text-emerald-500 w-8 h-8" />
+          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-emerald-300 tracking-tight flex items-center gap-3">
+            <Layers className="text-indigo-600 dark:text-emerald-400 w-8 h-8" />
             Checar fontes Onlines
           </h2>
-          <p className="text-slate-500 dark:text-emerald-900/70 mt-2 font-medium">
+          <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
             Verifique o tempo de resposta e a integridade de todas as bibliotecas e repositórios arquivistas.
           </p>
         </div>
@@ -109,13 +109,13 @@ export default function SourcesPanel() {
                   <span className="text-xs font-bold text-emerald-600 uppercase">On</span>
                 </div>
                 <div className="w-full h-1.5 bg-rose-100 dark:bg-rose-950/40 rounded-full mt-4 flex shadow-inner overflow-hidden">
-                  <div className="bg-emerald-500 h-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" style={{ width: `${onlinePerc}%` }} />
+                  <div className="bg-emerald-500 h-full shadow-[0_0_10px_rgba(16,185,129,0.8)]" style={{ width: `${onlinePerc}%` }} />
                 </div>
               </>
             ) : (
               <>
-                <h3 className="text-5xl font-display font-black text-slate-300 dark:text-emerald-900/30 drop-shadow-sm">?</h3>
-                <p className="text-xs text-slate-500 dark:text-emerald-900/50 mt-4 font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-500 transition-colors">Execute para calcular</p>
+                <h3 className="text-5xl font-display font-black text-slate-300 dark:text-slate-700 drop-shadow-sm">?</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Execute para calcular</p>
               </>
             )}
           </div>
