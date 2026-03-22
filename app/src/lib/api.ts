@@ -32,7 +32,7 @@ export interface SourceHealth {
  * URL base da API.
  * Recupera das variaveis de ambiente ou usa fallback.
  */
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 /**
  * Realiza uma busca na API.

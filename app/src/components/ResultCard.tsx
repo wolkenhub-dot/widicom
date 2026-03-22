@@ -1,4 +1,4 @@
-import { Download, ExternalLink, Activity, HardDrive, Cpu } from 'lucide-react';
+import { Download, ExternalLink, Activity, HardDrive, Cpu, Gamepad2 } from 'lucide-react';
 
 interface ResultCardProps {
   titulo: string;
@@ -7,6 +7,7 @@ interface ResultCardProps {
   url_download_direto: string | null;
   status: 'Ativo' | 'Inativo' | 'Desconhecido';
   imageUrl?: string;
+  onPlayArcade?: (url: string) => void;
 }
 
 const STATUS_CONFIG = {
@@ -21,10 +22,14 @@ export default function ResultCard({
   url_original,
   url_download_direto,
   status,
-  imageUrl
+  imageUrl,
+  onPlayArcade
 }: ResultCardProps) {
   const conf = STATUS_CONFIG[status] || STATUS_CONFIG['Desconhecido'];
   const isTorrent = titulo.includes('Seeds:') || url_original.startsWith('magnet:');
+  
+  const downloadLink = url_download_direto || url_original;
+  const isEmulable = downloadLink.toLowerCase().endsWith('.zip');
 
   return (
     <div className="bg-white dark:bg-[#050505] rounded-[24px] p-6 flex flex-col h-full hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_20px_40px_-10px_rgba(16,185,129,0.15)] border border-slate-200/60 dark:border-white/5 transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group overflow-hidden relative">
@@ -57,26 +62,38 @@ export default function ResultCard({
       </h3>
 
       {/* Actions */}
-      <div className="relative z-10 mt-auto flex gap-3 pt-5 border-t border-slate-100 dark:border-white/5">
-        <button
-          onClick={() => window.open(url_original, '_blank')}
-          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs uppercase tracking-wider font-bold bg-slate-50 dark:bg-black hover:bg-slate-100 dark:hover:bg-white/5 text-slate-700 dark:text-emerald-500 border border-slate-200 dark:border-white/10 transition-colors"
-        >
-          <ExternalLink className="w-3.5 h-3.5" />
-          <span>Diretório</span>
-        </button>
+      <div className="relative z-10 mt-auto flex flex-col gap-2 pt-5 border-t border-slate-100 dark:border-white/5">
+        <div className="flex gap-3">
+          <button
+            onClick={() => window.open(url_original, '_blank')}
+            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs uppercase tracking-wider font-bold bg-slate-50 dark:bg-black hover:bg-slate-100 dark:hover:bg-white/5 text-slate-700 dark:text-emerald-500 border border-slate-200 dark:border-white/10 transition-colors"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            <span>Diretório</span>
+          </button>
 
-        <button
-          onClick={() => window.open(url_download_direto || url_original, '_blank')}
-          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs uppercase tracking-wider font-bold bg-emerald-600 dark:bg-emerald-600 text-white hover:bg-emerald-700 dark:hover:bg-emerald-500 shadow-md shadow-emerald-600/20 dark:shadow-emerald-600/20 hover:shadow-emerald-600/40 dark:hover:shadow-emerald-600/40 transition-all duration-500 ease-out outline-none"
-        >
-          {isTorrent ? (
-            <HardDrive className="w-3.5 h-3.5" />
-          ) : (
-            <Download className="w-3.5 h-3.5" />
-          )}
-          <span>{isTorrent ? 'Magnet' : 'Obter'}</span>
-        </button>
+          <button
+            onClick={() => window.open(downloadLink, '_blank')}
+            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs uppercase tracking-wider font-bold bg-emerald-600 dark:bg-emerald-600 text-white hover:bg-emerald-700 dark:hover:bg-emerald-500 shadow-md shadow-emerald-600/20 dark:shadow-emerald-600/20 hover:shadow-emerald-600/40 dark:hover:shadow-emerald-600/40 transition-all duration-500 ease-out outline-none"
+          >
+            {isTorrent ? (
+              <HardDrive className="w-3.5 h-3.5" />
+            ) : (
+              <Download className="w-3.5 h-3.5" />
+            )}
+            <span>{isTorrent ? 'Magnet' : 'Obter'}</span>
+          </button>
+        </div>
+
+        {isEmulable && onPlayArcade && (
+          <button
+            onClick={() => onPlayArcade(downloadLink)}
+            className="w-full flex items-center justify-center gap-2 py-3 mt-1 rounded-xl text-xs uppercase tracking-wider font-bold bg-black text-emerald-400 border border-emerald-500/50 hover:bg-emerald-500/10 hover:border-emerald-400 hover:text-emerald-300 shadow-[inset_0_0_15px_rgba(16,185,129,0.2)] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all duration-300 ease-out outline-none crt-scanlines"
+          >
+            <Gamepad2 className="w-4 h-4 animate-pulse" />
+            <span>Jogar Agora (Fliperama Embutido)</span>
+          </button>
+        )}
       </div>
 
     </div>

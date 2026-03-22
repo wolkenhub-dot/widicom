@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { AlertCircle, Filter, ChevronLeft, ChevronRight, Search as SearchIcon, Layers, Home as HomeIcon, Zap, Database, Terminal, ChevronDown, Box } from 'lucide-react';
+import { AlertCircle, Filter, ChevronLeft, ChevronRight, Search as SearchIcon, Layers, Home as HomeIcon, Zap, Database, Terminal, ChevronDown, Box, MonitorPlay } from 'lucide-react';
 import SearchBar from '@/components/SearchBar';
 import ResultCard from '@/components/ResultCard';
 import SourcesPanel from '@/components/SourcesPanel';
 import SearchLoading from '@/components/SearchLoading';
 import TerminalWidicom from '@/components/TerminalWidicom';
+import ArcadeEmulatorModal from '@/components/ArcadeEmulatorModal';
 import { searchLostMedia, checkAPIHealth } from '@/lib/api';
 import type { SearchResponse } from '@/lib/api';
 import { toast } from 'sonner';
@@ -26,6 +27,8 @@ export default function Home() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const [, setEasterEggKeys] = useState<string[]>([]);
   const [isAppsMenuOpen, setIsAppsMenuOpen] = useState(false);
+  const [isArcadeOpen, setIsArcadeOpen] = useState(false);
+  const [arcadeRomUrl, setArcadeRomUrl] = useState('');
 
   // Check API health on mount
   useEffect(() => {
@@ -290,6 +293,13 @@ export default function Home() {
                   <Terminal className="w-4 h-4" />
                   Terminal Widicom
                 </button>
+                <button
+                  onClick={() => { setIsArcadeOpen(true); setIsAppsMenuOpen(false); }}
+                  className="w-full text-left px-4 py-3 flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-emerald-300 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border-t border-slate-100 dark:border-white/5"
+                >
+                  <MonitorPlay className="w-4 h-4" />
+                  Fliperama Embutido
+                </button>
               </div>
             )}
           </div>
@@ -434,7 +444,13 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredResults.map((result, index) => (
                   <div key={index} className="animate-slide-up opacity-0" style={{ animationDelay: `${(index * 30) + 150}ms` }}>
-                    <ResultCard {...result} />
+                    <ResultCard 
+                      {...result} 
+                      onPlayArcade={(url) => {
+                        setArcadeRomUrl(url);
+                        setIsArcadeOpen(true);
+                      }}
+                    />
                   </div>
                 ))}
               </div>
@@ -483,6 +499,7 @@ export default function Home() {
       )}
 
       {isTerminalOpen && <TerminalWidicom onClose={() => setIsTerminalOpen(false)} />}
+      {isArcadeOpen && <ArcadeEmulatorModal romUrl={arcadeRomUrl} onClose={() => { setIsArcadeOpen(false); setArcadeRomUrl(''); }} />}
     </div>
   );
 }

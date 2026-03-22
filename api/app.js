@@ -10,6 +10,7 @@ const path = require('path');
 const searchController = require('./searchController');
 const healthController = require('./healthController');
 const autocompleteController = require('./autocompleteController');
+const proxyController = require('./proxyController');
 
 require('dotenv').config();
 
@@ -33,6 +34,11 @@ fastify.get('/search', searchController.search);
  * Rota para autocompletar termos de busca na interface do terminal.
  */
 fastify.get('/autocomplete', autocompleteController.getSuggestions);
+
+/**
+ * Rota proxy segura (burlar CORS de ROMs antigas)
+ */
+fastify.get('/proxy', proxyController.proxyFile);
 
 /**
  * Rota para obter estatísticas globais e verificar integridade
