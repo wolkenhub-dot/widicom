@@ -34,10 +34,10 @@ export default function SourcesPanel() {
         <div>
           <h2 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
             <Layers className="text-indigo-400 w-8 h-8" />
-            Integridade das Fontes
+            Checar fontes Onlines
           </h2>
           <p className="text-slate-400 mt-2 font-medium">
-            Painel de diagnóstico para auditar as conexões e o Deep Scraping das 11 bibliotecas nativas.
+            Verifique o tempo de resposta e a integridade de todas as bibliotecas e repositórios arquivistas.
           </p>
         </div>
         <button
@@ -53,8 +53,8 @@ export default function SourcesPanel() {
       {!hasTested && !isTesting && (
         <div className="glass-card rounded-2xl p-12 text-center flex flex-col items-center justify-center border-dashed border-2 border-slate-700/50">
           <Zap className="w-12 h-12 text-indigo-400/50 mb-4" />
-          <h3 className="text-xl text-slate-300 font-semibold">Nenhum diagnóstico rodou ainda</h3>
-          <p className="text-slate-500 mt-2">Clique no botão acima para submeter um payload paralelo e medir o Ping de resposta.</p>
+          <h3 className="text-xl text-slate-300 font-semibold">Nenhuma checagem rodou ainda</h3>
+          <p className="text-slate-500 mt-2">Clique no botão acima para testar todos os endpoints em tempo real.</p>
         </div>
       )}
 

@@ -8,6 +8,7 @@
  */
 
 const axios = require('axios');
+const dorkEngine = require('./dorkEngine');
 
 // Instâncias públicas para rotação
 const SEARXNG_INSTANCES = [
@@ -35,6 +36,23 @@ function identifyPlatform(url) {
   if (urlLower.includes('gitlab.com')) return 'GitLab';
   if (urlLower.includes('sourceforge.net')) return 'SourceForge';
   if (urlLower.includes('4shared.com')) return '4Shared';
+  if (urlLower.includes('cdromance.org')) return 'CDRomance';
+  if (urlLower.includes('retro-exo.com')) return 'Retro-eXo';
+  if (urlLower.includes('hiddenpalace.org')) return 'Hidden Palace';
+  if (urlLower.includes('nopaystation.com')) return 'NoPayStation';
+  if (urlLower.includes('tcrf.net')) return 'TCRF';
+  if (urlLower.includes('winworldpc.com')) return 'WinWorld';
+  if (urlLower.includes('macintoshgarden.org')) return 'Macintosh Garden';
+  if (urlLower.includes('betaarchive.com')) return 'BetaArchive';
+  if (urlLower.includes('tokyotoshokan.info')) return 'Tokyo Toshokan';
+  if (urlLower.includes('oldgamesdownload.com')) return 'OldGamesDownload';
+  if (urlLower.includes('gog-games.to')) return 'GOG-Games';
+  if (urlLower.includes('rutracker.org')) return 'RuTracker';
+  if (urlLower.includes('moddb.com')) return 'ModDB';
+  if (urlLower.includes('ziperto.com')) return 'Ziperto';
+  if (urlLower.includes('romulation.org')) return 'RomUlation';
+  if (urlLower.includes('apkmirror.com')) return 'APKMirror';
+  if (urlLower.includes('abandonia.com')) return 'Abandonia';
   return 'Outra';
 }
 
@@ -43,60 +61,74 @@ function identifyPlatform(url) {
  * 
  * @param {string} query O termo de busca original do usuário.
  * @param {number} page Número da página a ser pesquisada.
+ * @param {string} mode O modo de busca ('quick' ou 'deep').
  * @returns {Promise<Object[]>} Arrays de resultados ou vazio em caso de erro.
  */
-async function searchSearxNG(query, page = 1) {
-  // Configura o AbortController nativo com timeout de 10 segundos global
+async function searchSearxNG(query, page = 1, mode = "deep") {
+  // Limites Dinâmicos: Quick = 8s (para fechar UI em 5s), Deep = 59.5s
+  const isQuick = mode === 'quick';
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000);
+  const timeoutId = setTimeout(() => controller.abort(), isQuick ? 8000 : 59500);
 
-  const hasTags = query.includes('(');
-  const cleanQuery = query.replace(/ext:/g, '');
-  const baseOnly = query.split('(')[0].trim();
+  // Pega todas as dezenas de frações formatadas
+  const dorksSeguras = dorkEngine.generateDorks(query, 'tudo', mode);
+  
+  let allResults = [];
+  let instanceIndex = 0;
 
-  // Apenas englobamos com aspas se for uma string simples para ser precisa. Se houver tags (OR/AND), evitamos corromper a regex nativa dos buscadores.
-  const expandedSites = "site:drive.google.com OR site:mega.nz OR site:mediafire.com OR site:dropbox.com OR site:github.com OR site:gitlab.com OR site:sourceforge.net OR site:4shared.com";
-  const searxQuery = hasTags
-    ? `${cleanQuery} (${expandedSites})`
-    : `"${query}" (${expandedSites})`;
+  const chunkArray = (arr, size) => arr.length ? [arr.slice(0, size), ...chunkArray(arr.slice(size), size)] : [];
+  
+  // Quick = Atira tudo de uma vez. Deep = Separa em lotes de 3.
+  const rotinasDistribuidas = isQuick ? [dorksSeguras] : chunkArray(dorksSeguras, 3); 
 
-  for (const instance of SEARXNG_INSTANCES) {
-    if (controller.signal.aborted) {
-      console.log('[searxngService] Timeout global de 10s atingido. Abortando instâncias restantes.');
-      break;
-    }
+  for (const lote of rotinasDistribuidas) {
+    if (controller.signal.aborted) break;
 
-    try {
-      const response = await axios.get(`${instance}/search`, {
-        params: {
-          q: searxQuery,
-          pageno: page,
-          format: 'json',
-          language: 'pt-BR'
-        },
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        },
-        timeout: 3500, // Timeout por instância de 3.5s para não comer o AbortController global
-        signal: controller.signal // O Axios usará o singal nativo do Node.js
-      });
+    const promisesDoLote = lote.map(async (searxQuery) => {
+      const instance = SEARXNG_INSTANCES[instanceIndex % SEARXNG_INSTANCES.length];
+      instanceIndex++;
 
-      if (response.data && response.data.results && response.data.results.length > 0) {
-        clearTimeout(timeoutId);
+      try {
+        const response = await axios.get(`${instance}/search`, {
+          params: { q: searxQuery, pageno: page, format: 'json', language: 'pt-BR' },
+          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
+          timeout: isQuick ? 8000 : 55000,
+          signal: controller.signal
+        });
 
-        return response.data.results.map(item => ({
-          title: item.title,
-          url: item.url,
-          platform: identifyPlatform(item.url)
-        }));
+        const dataResults = response?.data?.results;
+        if (Array.isArray(dataResults) && dataResults.length > 0) {
+          return dataResults.map(item => ({
+            title: item.title,
+            url: item.url,
+            platform: identifyPlatform(item.url)
+          }));
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error(`[searxngService] Bypass da instância ${instance} falhou para a Dork: ${searxQuery.substring(0, 30)}...`);
+        }
       }
-    } catch (error) {
-      if (controller.signal.aborted) {
-        console.log('[searxngService] Timeout global estourou durante a requisição. Abortando loop.');
-        break; 
+      return [];
+    });
+
+    const resolucoes = await Promise.allSettled(promisesDoLote);
+    resolucoes.forEach(r => {
+      if (r.status === 'fulfilled' && r.value.length > 0) {
+        allResults = [...allResults, ...r.value];
       }
-      console.error(`[searxngService] Falha de comunicação na instância ${instance} (${error.message}). Rodando próxima...`);
+    });
+
+    if (!isQuick) {
+      // Pacing Tático só rola na busca profunda (Deep)
+      await new Promise(res => setTimeout(res, 3000));
     }
+  }
+
+  // Retorno Rápido
+  if (allResults.length > 0) {
+    clearTimeout(timeoutId);
+    return allResults;
   }
 
   // Fallback Definitivo caso o SearxNG rejeite via Bloqueio de IP: Reddit JSON (Geralmente indexa muitos arquivos Google Drive)
@@ -106,6 +138,8 @@ async function searchSearxNG(query, page = 1) {
       try {
         // Para o Reddit, querys booleanas longas falham as buscas. Mandamos apenas a palavra chave principal protegida.
         const redditSites = '"drive.google.com" OR "mega.nz" OR "mediafire.com" OR "dropbox.com" OR "github.com" OR "gitlab.com" OR "sourceforge.net" OR "4shared.com"';
+        const hasTags = query.includes('(');
+        const baseOnly = query.split('(')[0].trim();
         const redditQ = hasTags
           ? `"${baseOnly}" (${redditSites})`
           : `"${query}" (${redditSites})`;

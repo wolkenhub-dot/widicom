@@ -1,19 +1,21 @@
-import { useState } from 'react';
 import { Search, Loader2 } from 'lucide-react';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
+  query: string;
+  onQueryChange: (query: string) => void;
   isLoading?: boolean;
   placeholder?: string;
 }
 
 export default function SearchBar({ 
   onSearch, 
+  query,
+  onQueryChange,
   isLoading = false,
   placeholder = 'O que você está procurando?',
 }: SearchBarProps) {
-  const [query, setQuery] = useState('');
-
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
@@ -37,7 +39,7 @@ export default function SearchBar({
         <input
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => onQueryChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={isLoading}

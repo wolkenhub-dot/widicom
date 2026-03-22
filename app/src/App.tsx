@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { AlertCircle, Filter, ChevronLeft, ChevronRight, Search as SearchIcon, Layers, Home as HomeIcon } from 'lucide-react';
+import { AlertCircle, Filter, ChevronLeft, ChevronRight, Search as SearchIcon, Layers, Home as HomeIcon, Zap, Database } from 'lucide-react';
 import SearchBar from '@/components/SearchBar';
 import ResultCard from '@/components/ResultCard';
 import SourcesPanel from '@/components/SourcesPanel';
+import SearchLoading from '@/components/SearchLoading';
 import { searchLostMedia, checkAPIHealth } from '@/lib/api';
 import type { SearchResponse } from '@/lib/api';
 import { toast } from 'sonner';
@@ -15,6 +16,8 @@ export default function Home() {
   const [activePlatformFilter, setActivePlatformFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [currentRoute, setCurrentRoute] = useState<'home' | 'fontes'>('home');
+  const [searchMode, setSearchMode] = useState<'quick' | 'deep'>('deep');
+  const [currentQuery, setCurrentQuery] = useState('');
 
   // Check API health on mount
   useEffect(() => {
@@ -23,7 +26,7 @@ export default function Home() {
       .catch(() => setApiAvailable(false));
   }, []);
 
-  const handleSearch = async (query: string, page: number = 1) => {
+  const handleSearch = async (query: string, page: number = 1, modeOverride?: 'quick' | 'deep') => {
     setIsLoading(true);
     setLastQuery(query);
     setCurrentPage(page);
@@ -31,7 +34,7 @@ export default function Home() {
     setResults(null); // Clear previous results to trigger transition
 
     try {
-      const data = await searchLostMedia(query, page);
+      const data = await searchLostMedia(query, page, modeOverride || searchMode);
       setResults(data);
 
       if (data.total_resultados_nesta_pagina === 0) {
@@ -66,6 +69,47 @@ export default function Home() {
     ? Array.from(new Set(results.resultados.map(r => r.plataforma)))
     : [];
 
+  const getPlatformDescription = (platform: string) => {
+    const desc: Record<string, string> = {
+      'Internet Archive': 'Acervo Global',
+      'Google Drive': 'Nuvem Pessoal',
+      'Mega.nz': 'Nuvem',
+      'MediaFire': 'Nuvem',
+      'Dropbox': 'Nuvem',
+      'GitHub': 'Códigos/Releases',
+      'GitLab': 'Códigos',
+      'CDRomance': 'ISOs e Traduções',
+      'Retro-eXo': 'MS-DOS e PCs Antigos',
+      'Hidden Palace': 'Protótipos e Betas',
+      'TCRF': 'Conteúdo Cortado',
+      'Hugging Face Datasets': 'Datasets Gigantes',
+      'NoPayStation': 'Arquivos PSN .pkg',
+      'WinWorld': 'Abandonware PC/Windows',
+      'Macintosh Garden': 'Abandonware Apple',
+      'Open Directory': 'Servidores Abertos',
+      'Torrent (Magnet)': 'Rede P2P',
+      'GameBanana': 'Mods de Jogos',
+      "Vimm's Lair": 'ROMs Clássicas Seguras',
+      'YTS': 'Filmes Torrent',
+      'Nyaa.si': 'Animes e Mangás',
+      "Anna's Archive": 'Livros e Artigos',
+      'OpenLibrary (Manuais/Livros)': 'Livros Digitais',
+      
+      // Fontes de Elite
+      'BetaArchive': 'Softwares Beta e Leaks',
+      'Tokyo Toshokan': 'Mídias Asiáticas Obscuras',
+      'OldGamesDownload': 'Jogos Clássicos/Abandonware',
+      'GOG-Games': 'Jogos DRM-Free',
+      'RuTracker': 'Fórum/Torrents Russos',
+      'ModDB': 'Mods e Indie Antigos',
+      'Ziperto': 'Roms Portáteis 3DS/Vita',
+      'RomUlation': 'ISOs Consolidadas',
+      'APKMirror': 'Apps Android Antigos',
+      'Abandonia': 'Clássicos MS-DOS'
+    };
+    return desc[platform] || 'Fonte Externa';
+  };
+
   const filteredResults = results
     ? (activePlatformFilter === 'all'
       ? results.resultados
@@ -94,7 +138,7 @@ export default function Home() {
             onClick={() => setCurrentRoute('fontes')}
             className={`flex items-center gap-2 text-sm font-semibold transition-colors ${currentRoute === 'fontes' ? 'text-indigo-400' : 'text-slate-400 hover:text-white'}`}
           >
-            <Layers className="w-4 h-4" /> <span className="hidden sm:inline">Diagnóstico</span>
+            <Layers className="w-4 h-4" /> <span className="hidden sm:inline">Checar fontes Onlines</span>
           </button>
         </div>
       </nav>
@@ -136,21 +180,36 @@ export default function Home() {
           </div>
           
           <div className="w-full animate-slide-up" style={{ animationDelay: '100ms' }}>
-            <SearchBar onSearch={(q) => handleSearch(q, 1)} isLoading={isLoading} />
+            <SearchBar 
+              query={currentQuery}
+              onQueryChange={setCurrentQuery}
+              onSearch={(q) => handleSearch(q, 1)} 
+              isLoading={isLoading} 
+            />
+          </div>
+
+          <div className="flex justify-center mt-2 mb-4 space-x-3 sm:space-x-4 animate-fade-in" style={{ animationDelay: '150ms' }}>
+             <button 
+                 type="button"
+                 onClick={() => { setSearchMode('quick'); if (currentQuery.trim()) handleSearch(currentQuery.trim(), 1, 'quick'); }}
+                 className={`flex items-center gap-2 cursor-pointer px-4 py-2 rounded-full border shadow-sm transition-all select-none focus:outline-none ${searchMode === 'quick' ? 'bg-indigo-500/20 border-indigo-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:border-indigo-400'}`}
+             >
+                 <Zap className={`w-4 h-4 ${searchMode === 'quick' ? 'text-amber-400' : 'text-slate-400'}`} />
+                 <span className="font-semibold text-sm drop-shadow-md">Busca Rápida (5s)</span>
+             </button>
+             <button 
+                 type="button"
+                 onClick={() => { setSearchMode('deep'); if (currentQuery.trim()) handleSearch(currentQuery.trim(), 1, 'deep'); }}
+                 className={`flex items-center gap-2 cursor-pointer px-4 py-2 rounded-full border shadow-sm transition-all select-none focus:outline-none ${searchMode === 'deep' ? 'bg-indigo-500/20 border-indigo-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:border-indigo-400'}`}
+             >
+                 <Database className={`w-4 h-4 ${searchMode === 'deep' ? 'text-rose-400' : 'text-slate-400'}`} />
+                 <span className="font-semibold text-sm drop-shadow-md">Avaliação Profunda (60s)</span>
+             </button>
           </div>
         </div>
 
-        {/* Loading Skeletons */}
-        {isLoading && (
-          <div className="w-full max-w-6xl mx-auto mt-8 animate-fade-in space-y-8">
-            <div className="h-8 w-48 rounded-lg skeleton-loading" />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-[200px] rounded-2xl skeleton-loading" style={{ animationDelay: `${i * 100}ms` }} />
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Animated 10s Search Loader */}
+        {isLoading && <SearchLoading mode={searchMode} />}
 
         {/* Results Body */}
         {results && (
@@ -196,7 +255,7 @@ export default function Home() {
                           : 'bg-white/5 text-slate-300 hover:bg-white/10'
                       }`}
                     >
-                      {platform}
+                      {platform} <span className="opacity-70 font-normal ml-1">({getPlatformDescription(platform)})</span>
                     </button>
                   ))}
                 </div>
