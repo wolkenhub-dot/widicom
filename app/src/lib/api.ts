@@ -78,6 +78,32 @@ export async function searchLostMedia(query: string, page: number = 1, mode: 'qu
 }
 
 /**
+ * Busca sugestões de autocompletar da API.
+ * 
+ * @param query O texto digitado.
+ * @returns Uma promessa que resolve para um array de strings.
+ */
+export async function getAutocomplete(query: string): Promise<string[]> {
+  if (!query.trim()) return [];
+  
+  try {
+    const url = new URL(`${API_BASE_URL}/autocomplete`);
+    url.searchParams.append('q', query.trim());
+    
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+    });
+    
+    if (!response.ok) return [];
+    
+    const data = await response.json();
+    return data.data || [];
+  } catch {
+    return [];
+  }
+}
+
+/**
  * Verifica a disponibilidade da API.
  * 
  * @returns Uma promessa que resolve para true se a API está disponível.

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { AlertCircle, Filter, ChevronLeft, ChevronRight, Search as SearchIcon, Layers, Home as HomeIcon, Zap, Database } from 'lucide-react';
+import { AlertCircle, Filter, ChevronLeft, ChevronRight, Search as SearchIcon, Layers, Home as HomeIcon, Zap, Database, Terminal, ChevronDown, Box } from 'lucide-react';
 import SearchBar from '@/components/SearchBar';
 import ResultCard from '@/components/ResultCard';
 import SourcesPanel from '@/components/SourcesPanel';
 import SearchLoading from '@/components/SearchLoading';
+import TerminalWidicom from '@/components/TerminalWidicom';
 import { searchLostMedia, checkAPIHealth } from '@/lib/api';
 import type { SearchResponse } from '@/lib/api';
 import { toast } from 'sonner';
@@ -22,6 +23,9 @@ export default function Home() {
   const [searchMode, setSearchMode] = useState<'quick' | 'deep'>('deep');
   const [currentQuery, setCurrentQuery] = useState('');
   const [initParticles, setInitParticles] = useState(false);
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [, setEasterEggKeys] = useState<string[]>([]);
+  const [isAppsMenuOpen, setIsAppsMenuOpen] = useState(false);
 
   // Check API health on mount
   useEffect(() => {
@@ -44,6 +48,28 @@ export default function Home() {
       setTheme(savedTheme);
       if (savedTheme === 'dark') document.documentElement.classList.add('dark');
     }
+  }, []);
+
+  // Easter Egg Global Hook
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in an input (except our own hidden ones)
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      
+      setEasterEggKeys(prev => {
+        const newKeys = [...prev, e.key.toLowerCase()].slice(-3);
+        if (newKeys.join('') === 'cmd') {
+          setIsTerminalOpen(true);
+          return [];
+        }
+        return newKeys;
+      });
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   const toggleTheme = () => {
@@ -242,10 +268,31 @@ export default function Home() {
           </button>
           <button 
             onClick={() => setCurrentRoute('fontes')}
-            className={`flex items-center gap-2 text-sm font-semibold transition-colors duration-300 border-slate-200 dark:border-white/10 pr-0 sm:pr-2 ${currentRoute === 'fontes' ? 'text-emerald-600 dark:text-emerald-400 drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-emerald-200'}`}
+            className={`flex items-center gap-2 text-sm font-semibold transition-colors duration-300 border-slate-200 dark:border-white/10 ${currentRoute === 'fontes' ? 'text-emerald-600 dark:text-emerald-400 drop-shadow-sm dark:drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-emerald-200'}`}
           >
             <Layers className="w-4 h-4" /> <span className="hidden sm:inline">Diagnóstico</span>
           </button>
+          
+          <div className="relative">
+            <button 
+              onClick={() => setIsAppsMenuOpen(!isAppsMenuOpen)}
+              className="flex items-center gap-2 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-emerald-200 transition-colors duration-300"
+            >
+              <Box className="w-4 h-4" /> <span className="hidden sm:inline">Apps</span> <ChevronDown className="w-3 h-3 ml-[-4px]" />
+            </button>
+            
+            {isAppsMenuOpen && (
+              <div className="absolute top-full mt-4 right-0 w-48 bg-white dark:bg-black border border-slate-200 dark:border-white/10 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_40px_rgba(16,185,129,0.1)] py-2 animate-slide-up origin-top-right overflow-hidden">
+                <button
+                  onClick={() => { setIsTerminalOpen(true); setIsAppsMenuOpen(false); }}
+                  className="w-full text-left px-4 py-3 flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-emerald-300 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                >
+                  <Terminal className="w-4 h-4" />
+                  Terminal Widicom
+                </button>
+              </div>
+            )}
+          </div>
           
           <div className="h-6 w-px bg-slate-200 dark:bg-white/10 mx-1 hidden sm:block"></div>
           
@@ -435,6 +482,7 @@ export default function Home() {
         <SourcesPanel />
       )}
 
+      {isTerminalOpen && <TerminalWidicom onClose={() => setIsTerminalOpen(false)} />}
     </div>
   );
 }

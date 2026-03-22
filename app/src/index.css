@@ -118,6 +118,90 @@
   }
 }
 
+/* 
+ * ============================================================================
+ * TERMINAL WIDICOM EASTER EGG CSS
+ * ============================================================================
+ */
+
+@keyframes flicker {
+  0% { opacity: 0.95; }
+  5% { opacity: 0.85; }
+  10% { opacity: 0.95; }
+  15% { opacity: 1; }
+  20% { opacity: 0.9; }
+  25% { opacity: 0.95; }
+  30% { opacity: 1; }
+  35% { opacity: 0.9; }
+  40% { opacity: 0.8; }
+  45% { opacity: 0.95; }
+  50% { opacity: 1; }
+  55% { opacity: 0.95; }
+  60% { opacity: 0.9; }
+  65% { opacity: 0.85; }
+  70% { opacity: 0.95; }
+  75% { opacity: 1; }
+  80% { opacity: 0.95; }
+  85% { opacity: 0.9; }
+  90% { opacity: 1; }
+  95% { opacity: 0.95; }
+  100% { opacity: 0.9; }
+}
+
+@keyframes crtTurnOn {
+  0% { transform: scale(1, 0.001) translate3d(0, 0, 0); filter: brightness(10); }
+  20% { transform: scale(1, 0.005) translate3d(0, 0, 0); filter: brightness(5); }
+  50% { transform: scale(1, 1) translate3d(0, 0, 0); filter: brightness(1.2); }
+  100% { transform: scale(1, 1) translate3d(0, 0, 0); filter: brightness(1); }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.crt-flicker {
+  animation: flicker 0.15s infinite;
+}
+
+.crt-turn-on {
+  animation: crtTurnOn 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.crt-scanlines::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 2;
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+}
+
+.crt-scanlines::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(16, 185, 129, 0.03); /* slight green phosphor bleed */
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  animation: scanline 8s linear infinite;
+  box-shadow: 0 0 4px rgba(16, 185, 129, 0.2);
+}
+
+.crt-overlay {
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.9);
+}
+
 @keyframes slide-up {
   0% { opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(5px); }
   100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
