@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { searchLostMediaStream, getAutocomplete } from '@/lib/api';
+import { X } from 'lucide-react';
 
 interface TerminalWidicomProps {
   onClose: () => void;
@@ -21,6 +22,7 @@ const ASCII_ART = `
  
  Widicom OS v1.0.9 (Terminal Widicom)
  Digite 'ajuda' para ver os comandos disponíveis.
+ Para sair, digite: Exit
 `;
 
 export default function TerminalWidicom({ onClose }: TerminalWidicomProps) {
@@ -37,15 +39,12 @@ export default function TerminalWidicom({ onClose }: TerminalWidicomProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Force focus to invisible input smoothly
-  useEffect(() => {
-    const focusInterval = setInterval(() => {
-      if (inputRef.current && document.activeElement !== inputRef.current) {
-        inputRef.current.focus({ preventScroll: true });
-      }
-    }, 500);
-    return () => clearInterval(focusInterval);
-  }, []);
+  const handleContainerClick = () => {
+    // Only focus if the user isn't selecting text
+    const selection = window.getSelection();
+    if (selection && selection.toString().length > 0) return;
+    inputRef.current?.focus();
+  };
 
   // DuckDuckGo Autocomplete Proxy
   useEffect(() => {
@@ -295,7 +294,19 @@ export default function TerminalWidicom({ onClose }: TerminalWidicomProps) {
   };
 
   return (
-    <div className={`fixed inset-0 z-[100] bg-black crt-scanlines crt-flicker crt-turn-on crt-overlay font-mono overflow-auto p-4 md:p-8 ${themeClasses[themeColor]}`}>
+    <div 
+      onClick={handleContainerClick}
+      className={`fixed inset-0 z-[100] bg-black crt-scanlines crt-flicker crt-turn-on crt-overlay font-mono overflow-auto p-4 md:p-8 selection:bg-current/30 selection:text-white cursor-text ${themeClasses[themeColor]}`}
+    >
+      {/* Floating Close Button */}
+      <button 
+        onClick={onClose}
+        className="fixed top-6 right-6 z-[110] p-3 rounded-full hover:bg-white/10 transition-all border border-current/20 hover:border-current hover:scale-110 active:scale-95 group shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+        title="Sair do Terminal"
+      >
+        <X className="w-6 h-6 opacity-40 group-hover:opacity-100 transition-opacity" />
+      </button>
+
       <div className="max-w-6xl mx-auto flex flex-col min-h-full">
         <div className="flex-1 whitespace-pre-wrap break-words">
           {history.map(item => (

@@ -5,6 +5,7 @@ import ResultCard from '@/components/ResultCard';
 import SourcesPanel from '@/components/SourcesPanel';
 import TerminalWidicom from '@/components/TerminalWidicom';
 import ArcadeEmulatorModal from '@/components/ArcadeEmulatorModal';
+import TutorialModal from '@/components/TutorialModal';
 import { searchLostMediaStream, checkAPIHealth } from '@/lib/api';
 import type { SearchResponse } from '@/lib/api';
 import { toast } from 'sonner';
@@ -28,6 +29,16 @@ export default function Home() {
   const [isAppsMenuOpen, setIsAppsMenuOpen] = useState(false);
   const [isArcadeOpen, setIsArcadeOpen] = useState(false);
   const [arcadeRomUrl, setArcadeRomUrl] = useState('');
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+
+  useEffect(() => {
+    // Check if tutorial was already completed
+    const tutorialCompleted = localStorage.getItem('widicom_tutorial_completed');
+    if (!tutorialCompleted) {
+      // Opening delay for better UX
+      setTimeout(() => setIsTutorialOpen(true), 1200);
+    }
+  }, []);
 
   // Check API health on mount
   useEffect(() => {
@@ -521,6 +532,13 @@ export default function Home() {
 
       {isTerminalOpen && <TerminalWidicom onClose={() => setIsTerminalOpen(false)} />}
       {isArcadeOpen && <ArcadeEmulatorModal romUrl={arcadeRomUrl} onClose={() => { setIsArcadeOpen(false); setArcadeRomUrl(''); }} />}
+      {isTutorialOpen && (
+        <TutorialModal 
+          theme={theme} 
+          toggleTheme={toggleTheme} 
+          onClose={() => setIsTutorialOpen(false)} 
+        />
+      )}
     </div>
   );
 }
