@@ -117,7 +117,7 @@ export function searchLostMediaStream(
     onComplete();
   });
 
-  eventSource.addEventListener('error', (event) => {
+  eventSource.addEventListener('error', (event: any) => {
     // If it's a custom error from our backend (has data payload)
     if (event.data) {
       try {
