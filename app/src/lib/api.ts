@@ -78,6 +78,70 @@ export async function searchLostMedia(query: string, page: number = 1, mode: 'qu
 }
 
 /**
+ * Realiza uma busca em stream usando Server-Sent Events (SSE).
+ * Melhora a percepção de velocidade desenhando os resultados na tela
+ * assim que o primeiro scraper os encontra.
+ */
+export function searchLostMediaStream(
+  query: string, 
+  page: number = 1, 
+  mode: 'quick' | 'deep' = 'deep',
+  onMessage: (data: any) => void,
+  onComplete: () => void,
+  onError: (err: Error) => void
+): () => void {
+  if (!query.trim()) {
+    onError(new Error('O termo de busca não pode estar vazio.'));
+    return () => {};
+  }
+
+  const url = new URL(`${API_BASE_URL}/search`);
+  url.searchParams.append('query', query);
+  url.searchParams.append('page', page.toString());
+  url.searchParams.append('mode', mode);
+
+  // Fallback to Native EventSource
+  const eventSource = new EventSource(url.toString());
+
+  eventSource.addEventListener('results', (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      onMessage(data);
+    } catch (e) {
+      console.error('Falha ao dar parse no pedaço do stream', e);
+    }
+  });
+
+  eventSource.addEventListener('end', () => {
+    eventSource.close();
+    onComplete();
+  });
+
+  eventSource.addEventListener('error', (event) => {
+    // If it's a custom error from our backend (has data payload)
+    if (event.data) {
+      try {
+        const data = JSON.parse(event.data);
+        onError(new Error(data.error || 'Erro na conexão do Stream'));
+      } catch (e) {
+        onError(new Error('Erro na conexão do Stream'));
+      }
+    } else {
+      // It's a generic connection error (e.g timeout/cors).
+      // EventSource tries to seamlessly reconnect. We should close it if this fails heavily,
+      // but let's just surface it and end.
+      onError(new Error('Conexão perdida com o motor de busca.'));
+    }
+    eventSource.close();
+  });
+
+  // Return abort function for react unmounts or early cancellation
+  return () => {
+    eventSource.close();
+  };
+}
+
+/**
  * Busca sugestões de autocompletar da API.
  * 
  * @param query O texto digitado.

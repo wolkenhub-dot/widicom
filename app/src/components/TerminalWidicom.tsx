@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { searchLostMedia, getAutocomplete } from '@/lib/api';
+import { searchLostMediaStream, getAutocomplete } from '@/lib/api';
 
 interface TerminalWidicomProps {
   onClose: () => void;
@@ -19,7 +19,7 @@ const ASCII_ART = `
 ╚███╔███╔╝██║██████╔╝██║╚██████╗╚██████╔╝██║ ╚═╝ ██║
  ╚══╝╚══╝ ╚═╝╚═════╝ ╚═╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝
  
- Widicom OS v1.0.9 (Terminal de Fósforo)
+ Widicom OS v1.0.9 (Terminal Widicom)
  Digite 'ajuda' para ver os comandos disponíveis.
 `;
 
@@ -33,7 +33,7 @@ export default function TerminalWidicom({ onClose }: TerminalWidicomProps) {
   const [loadingProgress, setLoadingProgress] = useState<number | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string>('');
   const [suggestion, setSuggestion] = useState<string>('');
-  
+
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -102,22 +102,22 @@ export default function TerminalWidicom({ onClose }: TerminalWidicomProps) {
     if (args.length === 0 || !args[0]) return;
 
     const command = args[0].toLowerCase();
-    
+
     switch (command) {
       case 'exit':
         onClose();
         break;
-      
+
       case 'clear':
         setHistory([]);
         break;
-      
+
       case 'ajuda':
       case 'help':
         addHistory('output', (
           <div className="space-y-4">
             <div><span className="text-current font-bold">WIDICOM CLI - MANUAL DE OPERAÇÕES DO TERMINAL v1.0</span></div>
-            
+
             <div className="space-y-1">
               <div><span className="font-bold underline">COMANDOS DISPONÍVEIS</span></div>
               <div>  <span className="opacity-80">search [termo] [flags]</span>   Busca por mídias e arquivos na rede.</div>
@@ -130,7 +130,6 @@ export default function TerminalWidicom({ onClose }: TerminalWidicomProps) {
               <div><span className="font-bold underline">PARÂMETROS DE BUSCA (REFINAMENTO)</span></div>
               <div>  <span className="opacity-80">--filetype [ext]</span>   Filtra por extensão (ex: zip, iso, rar, mp3).</div>
               <div>  <span className="opacity-80">--engine [nome]</span>    Busca em motor específico (ex: google, bing, archive).</div>
-              <div>  <span className="opacity-80">--deep</span>             Ativa busca profunda (60s). Padrão é rápida (10s).</div>
             </div>
 
             <div className="space-y-1">
@@ -143,10 +142,10 @@ export default function TerminalWidicom({ onClose }: TerminalWidicomProps) {
             <div className="space-y-1">
               <div><span className="font-bold underline">EXEMPLOS PRÁTICOS</span></div>
               <div>  <span className="text-current/60">search "Sonic CD" --filetype iso</span></div>
-              <div>  <span className="text-current/60">search "Titanic Documentaries" --engine internetarchive --deep</span></div>
+              <div>  <span className="text-current/60">search "Titanic Documentaries" --engine internetarchive</span></div>
               <div>  <span className="text-current/60">theme --color amber</span></div>
             </div>
-            
+
             <div className="text-xs opacity-50 border-t border-current/20 pt-2">
               Sistema de extração Widicom v1.0.9 - Todos os direitos reservados.
             </div>
@@ -173,14 +172,12 @@ export default function TerminalWidicom({ onClose }: TerminalWidicomProps) {
           let searchMode: 'quick' | 'deep' = 'quick';
 
           for (let i = 1; i < args.length; i++) {
-            if (args[i] === '--filetype' && args[i+1]) {
-              filetype = args[i+1].replace(/"/g, '');
+            if (args[i] === '--filetype' && args[i + 1]) {
+              filetype = args[i + 1].replace(/"/g, '');
               i++;
-            } else if (args[i] === '--engine' && args[i+1]) {
-              engine = args[i+1].replace(/"/g, '');
+            } else if (args[i] === '--engine' && args[i + 1]) {
+              engine = args[i + 1].replace(/"/g, '');
               i++;
-            } else if (args[i] === '--deep') {
-              searchMode = 'deep';
             } else {
               queryStr += args[i] + " ";
             }
@@ -206,9 +203,17 @@ export default function TerminalWidicom({ onClose }: TerminalWidicomProps) {
           setLoadingMessage('DISCANDO PARA NÓ SEGURO...');
 
           // Start the API call concurrently with a 9.5s hard timeout to guarantee max 10s total runtime
-          const searchPromise = searchLostMedia(finalQuery, 1, searchMode);
+          // Start the API call leveraging our new stream logic but wrapping in a promise for terminal
+          const searchPromise = new Promise((resolve, reject) => {
+            let acc: any[] = [];
+            searchLostMediaStream(finalQuery, 1, searchMode,
+              (data) => { acc.push(...data.resultados); },
+              () => { resolve({ resultados: acc }); },
+              (err) => { reject(err); }
+            );
+          });
           const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT_EXCEEDED')), 9500));
-          
+
           let fetchCompleted = false;
           let results: any = null;
           let fetchError: any = null;
@@ -221,7 +226,7 @@ export default function TerminalWidicom({ onClose }: TerminalWidicomProps) {
           // Cinematic 80s Loading Animation (Max ~8.5s)
           for (let i = 0; i <= 100; i += 2) {
             // If fetch finishes early, we can speed up the rest of the animation
-            await new Promise(r => setTimeout(r, fetchCompleted ? 15 : 150)); 
+            await new Promise(r => setTimeout(r, fetchCompleted ? 15 : 150));
             setLoadingProgress(i);
             if (i === 10) setLoadingMessage('HANDSHAKE ACEITO...');
             if (i === 30) setLoadingMessage('BYPASSING FIREWALLS...');
@@ -233,7 +238,7 @@ export default function TerminalWidicom({ onClose }: TerminalWidicomProps) {
           setLoadingProgress(null);
 
           if (fetchError) {
-             throw fetchError;
+            throw fetchError;
           }
 
           if (!results || !results.resultados || results.resultados.length === 0) {
@@ -262,7 +267,7 @@ export default function TerminalWidicom({ onClose }: TerminalWidicomProps) {
         }
         break;
       }
-      
+
       default:
         addHistory('error', `Comando não encontrado: ${command}. Digite 'ajuda' para a lista de comandos.`);
     }
@@ -323,7 +328,7 @@ export default function TerminalWidicom({ onClose }: TerminalWidicomProps) {
               />
             </div>
           )}
-          
+
           {/* Processing Blinker or Loading Bar */}
           {isProcessing && loadingProgress !== null ? (
             <div className="mt-4 flex flex-col font-bold">
@@ -338,7 +343,7 @@ export default function TerminalWidicom({ onClose }: TerminalWidicomProps) {
               <span className="w-2 h-5 bg-current" />
             </div>
           ) : null}
-          
+
           <div ref={bottomRef} className="h-16" />
         </div>
       </div>

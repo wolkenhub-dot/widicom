@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { AlertCircle, Filter, ChevronLeft, ChevronRight, Search as SearchIcon, Layers, Home as HomeIcon, Zap, Database, Terminal, ChevronDown, Box, MonitorPlay } from 'lucide-react';
+import { AlertCircle, Filter, ChevronLeft, ChevronRight, Search as SearchIcon, Layers, Home as HomeIcon, Terminal, ChevronDown, Box, MonitorPlay } from 'lucide-react';
 import SearchBar from '@/components/SearchBar';
 import ResultCard from '@/components/ResultCard';
 import SourcesPanel from '@/components/SourcesPanel';
-import SearchLoading from '@/components/SearchLoading';
 import TerminalWidicom from '@/components/TerminalWidicom';
 import ArcadeEmulatorModal from '@/components/ArcadeEmulatorModal';
-import { searchLostMedia, checkAPIHealth } from '@/lib/api';
+import { searchLostMediaStream, checkAPIHealth } from '@/lib/api';
 import type { SearchResponse } from '@/lib/api';
 import { toast } from 'sonner';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
@@ -21,7 +20,7 @@ export default function Home() {
   const [activePlatformFilter, setActivePlatformFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [currentRoute, setCurrentRoute] = useState<'home' | 'fontes'>('home');
-  const [searchMode, setSearchMode] = useState<'quick' | 'deep'>('deep');
+  const [searchMode] = useState<'quick' | 'deep'>('quick');
   const [currentQuery, setCurrentQuery] = useState('');
   const [initParticles, setInitParticles] = useState(false);
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
@@ -86,29 +85,62 @@ export default function Home() {
     }
   };
 
-  const handleSearch = async (query: string, page: number = 1, modeOverride?: 'quick' | 'deep') => {
+  const handleSearch = (query: string, page: number = 1, modeOverride?: 'quick' | 'deep') => {
     setIsLoading(true);
     setLastQuery(query);
     setCurrentPage(page);
     setActivePlatformFilter('all');
-    setResults(null); // Clear previous results to trigger transition
+    
+    // In SSE, we start with an empty layout and let it populate gracefully
+    setResults({
+      query,
+      pagina_atual: page,
+      total_resultados_nesta_pagina: 0,
+      resultados: []
+    } as any);
 
-    try {
-      const data = await searchLostMedia(query, page, modeOverride || searchMode);
-      setResults(data);
+    searchLostMediaStream(
+      query,
+      page,
+      modeOverride || searchMode,
+      (data) => {
+        // We received a batch from one of the scrapers
+        setResults((prev: any) => {
+          if (!prev) return prev;
+          // Merge old and new securely based on SSE chunks 
+          const combined = [...prev.resultados, ...data.resultados];
+          
+          // Fallback duplicate check on front-end
+          const seen = new Set();
+          const cleanResults = combined.filter((r: any) => {
+            if (!r || !r.url_original || seen.has(r.url_original)) return false;
+            seen.add(r.url_original);
+            return true;
+          });
 
-      if (data.total_resultados_nesta_pagina === 0) {
-        toast.info(page === 1 ? 'Nenhum resultado encontrado para esta busca.' : 'Fim dos resultados.');
-      } else {
-        if (page === 1) toast.success(`${data.total_resultados_nesta_pagina} resultados de múltiplas fontes integrados com sucesso.`);
+          return {
+            ...prev,
+            total_resultados_nesta_pagina: cleanResults.length,
+            resultados: cleanResults
+          };
+        });
+      },
+      () => {
+        setIsLoading(false);
+        setResults((currentResults: any) => {
+          if (!currentResults || currentResults.resultados.length === 0) {
+            toast.info(page === 1 ? 'Nenhum resultado encontrado para esta busca.' : 'Fim dos resultados.');
+          } else if (page === 1) {
+            toast.success(`${currentResults.resultados.length} resultados rastreados com sucesso via streaming!`);
+          }
+          return currentResults;
+        });
+      },
+      (error) => {
+        toast.error((error as Error).message || 'Erro ao comunicar com o servidor de busca.');
+        setIsLoading(false);
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao buscar';
-      toast.error(errorMessage);
-      console.error('Erro na busca:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    );
   };
 
   const handleNextPage = () => {
@@ -365,28 +397,10 @@ export default function Home() {
             />
           </div>
 
-          <div className="flex justify-center mt-3 mb-4 space-x-3 sm:space-x-4 animate-fade-in" style={{ animationDelay: '100ms' }}>
-             <button 
-                 type="button"
-                 onClick={() => { setSearchMode('quick'); if (currentQuery.trim()) handleSearch(currentQuery.trim(), 1, 'quick'); }}
-                 className={`flex items-center gap-2 cursor-pointer px-4 pt-2.5 pb-2 rounded-full border transition-all duration-300 select-none focus:outline-none ${searchMode === 'quick' ? 'bg-emerald-50/80 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/50 text-emerald-700 dark:text-emerald-300 shadow-sm' : 'bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:border-slate-300 dark:hover:border-white/20'}`}
-             >
-                 <Zap className={`w-4 h-4 ${searchMode === 'quick' ? 'text-amber-500 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`} />
-                 <span className="font-semibold text-sm drop-shadow-sm">Busca Rápida (5s)</span>
-             </button>
-             <button 
-                 type="button"
-                 onClick={() => { setSearchMode('deep'); if (currentQuery.trim()) handleSearch(currentQuery.trim(), 1, 'deep'); }}
-                 className={`flex items-center gap-2 cursor-pointer px-4 pt-2.5 pb-2 rounded-full border transition-all duration-300 select-none focus:outline-none ${searchMode === 'deep' ? 'bg-rose-50/80 dark:bg-emerald-500/10 border-rose-200 dark:border-emerald-500/50 text-rose-700 dark:text-emerald-300 shadow-sm' : 'bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:border-slate-300 dark:hover:border-white/20'}`}
-             >
-                 <Database className={`w-4 h-4 ${searchMode === 'deep' ? 'text-rose-500 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`} />
-                 <span className="font-semibold text-sm drop-shadow-sm">Avaliação Profunda (60s)</span>
-             </button>
-          </div>
+          {/* Search mode buttons removed to simplify UI - Quick Search is now the standard */}
         </div>
 
-        {/* Animated 10s Search Loader */}
-        {isLoading && <SearchLoading mode={searchMode} />}
+
 
         {/* Results Body */}
         {results && (

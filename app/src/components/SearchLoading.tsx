@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Search, Server, Globe, Cpu, Loader2 } from 'lucide-react';
 
-const getLoadingSteps = (mode: 'quick' | 'deep') => [
-  { message: mode === 'quick' ? 'Iniciando varredura ágil (5s)...' : 'Iniciando varredura global profunda (60s)...', icon: Globe, time: 0 },
-  { message: 'Consultando CDNs primárias...', icon: Server, time: mode === 'quick' ? 1.5 : 10 },
-  { message: 'Descriptografando repositórios abertos...', icon: Search, time: mode === 'quick' ? 3 : 30 },
-  { message: 'Filtrando links inativos via IA...', icon: Cpu, time: mode === 'quick' ? 4 : 45 }
+const getLoadingSteps = () => [
+  { message: 'Iniciando varredura Widicom...', icon: Globe, time: 0 },
+  { message: 'Consultando CDNs primárias...', icon: Server, time: 1.5 },
+  { message: 'Descriptografando repositórios abertos...', icon: Search, time: 3 },
+  { message: 'Filtrando links inativos via IA...', icon: Cpu, time: 4 }
 ];
 
-export default function SearchLoading({ mode = 'deep' }: { mode?: 'quick' | 'deep' }) {
-  const totalTime = mode === 'quick' ? 5 : 60;
-  const steps = getLoadingSteps(mode);
+export default function SearchLoading() {
+  const totalTime = 5;
+  const steps = getLoadingSteps();
   
   const [progress, setProgress] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(totalTime);
@@ -73,7 +73,7 @@ export default function SearchLoading({ mode = 'deep' }: { mode?: 'quick' | 'dee
           </h3>
           <p className="text-slate-500 dark:text-slate-400 font-medium flex items-center justify-center gap-2">
             <Loader2 className="w-4 h-4 animate-spin text-emerald-600 dark:text-emerald-400" />
-            Esta pesquisa profunda leva cerca de {Math.ceil(timeRemaining)} segundos
+            Esta varredura inteligente leva cerca de {Math.ceil(timeRemaining)} segundos
           </p>
         </div>
 

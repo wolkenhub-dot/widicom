@@ -329,23 +329,25 @@ const REGRAS_CATEGORIAS = {
 
 /**
  * Extrai termos positivos e negativos da query para suportar exclusões.
- * Exemplo: "naruto -shippuden" -> { termoPositivo: "naruto", termosNegativos: " -shippuden" }
+ * Exemplo: "naruto -shippuden" ou "naruto - shippuden" -> { termoPositivo: "naruto", termosNegativos: " -shippuden" }
  */
 function parseQueryTerms(query) {
-  const parts = query.trim().split(/\s+/);
-  const positivos = [];
   const negativos = [];
+  let termoPositivo = query;
 
-  parts.forEach(part => {
-    if (part.startsWith('-') && part.length > 1) {
-      negativos.push(part);
-    } else {
-      positivos.push(part);
-    }
-  });
+  // Regex para capturar o sinal de menos seguido opcionalmente por espaços e depois a palavra
+  const regexNegativo = /-\s*([a-zA-Z0-9_À-ÿ]+)/g;
+  let match;
+
+  while ((match = regexNegativo.exec(query)) !== null) {
+    // match[0] é a string completa capturada (ex: "- shippuden")
+    // match[1] é apenas a palavra (ex: "shippuden")
+    negativos.push('-' + match[1]); 
+    termoPositivo = termoPositivo.replace(match[0], ''); // Remove o termo negativo da query original
+  }
 
   return {
-    termoPositivo: positivos.join(' '),
+    termoPositivo: termoPositivo.replace(/\s+/g, ' ').trim(),
     termosNegativos: negativos.length > 0 ? " " + negativos.join(' ') : ""
   };
 }
