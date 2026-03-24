@@ -13,7 +13,7 @@ const dorkEngine = require('./dorkEngine');
 // Instâncias públicas para rotação
 const SEARXNG_INSTANCES = [
   // Custom VPS instance (user-provided)
-  'http://137.131.205.231:8080',
+  'https://widicom.lat/searxng',
   // Public instances (fallback)
   'https://searx.be',
   'https://paulgo.io',
