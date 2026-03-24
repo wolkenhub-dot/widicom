@@ -23,6 +23,7 @@ const linkChecker       = require('./linkChecker');
 const relevanceEngine   = require('./relevanceEngine');
 const metadataService   = require('./metadataService');
 const statsService      = require('./statsService');
+const geoService        = require('./geoService');
 
 // SSE Logic active
 
@@ -54,8 +55,6 @@ async function search(request, reply) {
   const seen = new Set();
   
   try {
-    statsService.incrementSearchCount();
-    
     const { termoPositivo, termosNegativos } = dorkEngine.parseQueryTerms(query);
     const positiveQuery = termoPositivo || query;
     const dorks = dorkEngine.generateDorks(query, 'tudo', mode);
@@ -181,6 +180,17 @@ async function search(request, reply) {
     
     await Promise.race([runnerPromise, globalTimeout]);
     
+    statsService.recordSearch({
+      query,
+      mode,
+      resultsCount: seen.size,
+      durationMs: Date.now() - startTime,
+    });
+
+    // Record visitor geolocation (non-blocking)
+    const clientIP = request.headers['x-forwarded-for']?.split(',')[0]?.trim() || request.ip || request.socket?.remoteAddress || '127.0.0.1';
+    geoService.recordVisitor(clientIP, query).catch(() => {});
+
     sendEvent('end', { message: 'Busca concluída' });
     reply.raw.end();
   } catch (error) {

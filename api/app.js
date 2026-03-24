@@ -11,6 +11,7 @@ const searchController = require('./searchController');
 const healthController = require('./healthController');
 const autocompleteController = require('./autocompleteController');
 const proxyController = require('./proxyController');
+const adminController = require('./adminController');
 
 require('dotenv').config();
 
@@ -49,6 +50,12 @@ fastify.get('/stats', healthController.getStats);
  * Rota para verificar a integridade da conexão direta com todas as pontes API
  */
 fastify.get('/health/sources', healthController.checkSources);
+
+/**
+ * Rotas do painel admin (protegidas por Bearer token)
+ */
+fastify.get('/admin/stats', adminController.getAdminStats);
+fastify.get('/admin/stream', adminController.adminStream);
 
 /**
  * Inicializa o servidor Fastify na porta especificada.

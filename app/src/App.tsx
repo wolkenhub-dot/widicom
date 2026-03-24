@@ -6,6 +6,7 @@ import SourcesPanel from '@/components/SourcesPanel';
 import TerminalWidicom from '@/components/TerminalWidicom';
 import ArcadeEmulatorModal from '@/components/ArcadeEmulatorModal';
 import TutorialModal from '@/components/TutorialModal';
+import AdminDashboard from '@/components/AdminDashboard';
 import { searchLostMediaStream, checkAPIHealth } from '@/lib/api';
 import type { SearchResponse } from '@/lib/api';
 import { toast } from 'sonner';
@@ -30,15 +31,29 @@ export default function Home() {
   const [isArcadeOpen, setIsArcadeOpen] = useState(false);
   const [arcadeRomUrl, setArcadeRomUrl] = useState('');
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+  const [isAdminMode, setIsAdminMode] = useState(false);
 
+  // Detect hidden admin route
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('panel') === 'admin') {
+      setIsAdminMode(true);
+      return;
+    }
     // Check if tutorial was already completed
     const tutorialCompleted = localStorage.getItem('widicom_tutorial_completed');
     if (!tutorialCompleted) {
-      // Opening delay for better UX
       setTimeout(() => setIsTutorialOpen(true), 1200);
     }
   }, []);
+
+  // Render admin dashboard if in admin mode (after all hooks)
+  const adminExit = () => {
+    setIsAdminMode(false);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('panel');
+    window.history.replaceState({}, '', url.toString());
+  };
 
   // Check API health on mount
   useEffect(() => {
@@ -66,11 +81,9 @@ export default function Home() {
   // Easter Egg Global Hook
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if typing in an input (except our own hidden ones)
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
       }
-      
       setEasterEggKeys(prev => {
         const newKeys = [...prev, e.key.toLowerCase()].slice(-3);
         if (newKeys.join('') === 'cmd') {
@@ -80,7 +93,6 @@ export default function Home() {
         return newKeys;
       });
     };
-    
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
@@ -102,7 +114,6 @@ export default function Home() {
     setCurrentPage(page);
     setActivePlatformFilter('all');
     
-    // In SSE, we start with an empty layout and let it populate gracefully
     setResults({
       query,
       pagina_atual: page,
@@ -115,20 +126,15 @@ export default function Home() {
       page,
       modeOverride || searchMode,
       (data) => {
-        // We received a batch from one of the scrapers
         setResults((prev: any) => {
           if (!prev) return prev;
-          // Merge old and new securely based on SSE chunks 
           const combined = [...prev.resultados, ...data.resultados];
-          
-          // Fallback duplicate check on front-end
           const seen = new Set();
           const cleanResults = combined.filter((r: any) => {
             if (!r || !r.url_original || seen.has(r.url_original)) return false;
             seen.add(r.url_original);
             return true;
           });
-
           return {
             ...prev,
             total_resultados_nesta_pagina: cleanResults.length,
@@ -197,8 +203,6 @@ export default function Home() {
       'Nyaa.si': 'Animes e Mangás',
       "Anna's Archive": 'Livros e Artigos',
       'OpenLibrary (Manuais/Livros)': 'Livros Digitais',
-      
-      // Fontes de Elite
       'BetaArchive': 'Softwares Beta e Leaks',
       'Tokyo Toshokan': 'Mídias Asiáticas Obscuras',
       'OldGamesDownload': 'Jogos Clássicos/Abandonware',
@@ -218,6 +222,9 @@ export default function Home() {
       ? results.resultados
       : results.resultados.filter(r => r.plataforma === activePlatformFilter))
     : [];
+
+  if (isAdminMode) return <AdminDashboard onExit={adminExit} />;
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-black relative selection:bg-emerald-500/20 dark:selection:bg-emerald-500/30 text-slate-800 dark:text-emerald-50 transition-colors duration-500">
       

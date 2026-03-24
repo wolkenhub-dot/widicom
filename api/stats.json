@@ -1,3 +1,18 @@
 {
-  "totalSearches": 133
+  "totalSearches": 134,
+  "searchHistory": [
+    {
+      "query": "retro gaming",
+      "mode": "quick",
+      "resultsCount": 121,
+      "durationMs": 4538,
+      "timestamp": "2026-03-24T19:36:58.842Z"
+    }
+  ],
+  "topQueries": {
+    "retro gaming": 1
+  },
+  "searchesByHour": {
+    "2026-03-24-16": 1
+  }
 }
