@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AlertCircle, Filter, ChevronLeft, ChevronRight, Search as SearchIcon, Layers, Home as HomeIcon, Terminal, ChevronDown, Box, MonitorPlay } from 'lucide-react';
+import { AlertCircle, Filter, ChevronLeft, ChevronRight, Search as SearchIcon, Layers, Home as HomeIcon, Terminal, ChevronDown, Box, Gamepad2 } from 'lucide-react';
 import SearchBar from '@/components/SearchBar';
 import ResultCard from '@/components/ResultCard';
 import SourcesPanel from '@/components/SourcesPanel';
@@ -311,9 +311,13 @@ export default function Home() {
           <div className="relative">
             <button 
               onClick={() => setIsAppsMenuOpen(!isAppsMenuOpen)}
-              className="flex items-center gap-2 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-emerald-200 transition-colors duration-300"
+              className="flex items-center gap-2 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-emerald-200 transition-colors duration-300 relative group"
             >
-              <Box className="w-4 h-4" /> <span className="hidden sm:inline">Apps</span> <ChevronDown className="w-3 h-3 ml-[-4px]" />
+              <Box className="w-4 h-4" /> 
+              <span className="hidden sm:inline">Apps</span> 
+              <ChevronDown className="w-3 h-3 ml-[-4px]" />
+              {/* Pulse Notification */}
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
             </button>
             
             {isAppsMenuOpen && (
@@ -327,10 +331,13 @@ export default function Home() {
                 </button>
                 <button
                   onClick={() => { setIsArcadeOpen(true); setIsAppsMenuOpen(false); }}
-                  className="w-full text-left px-4 py-3 flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-emerald-300 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border-t border-slate-100 dark:border-white/5"
+                  className="w-full text-left px-4 py-3 flex items-center justify-between text-sm font-semibold text-slate-700 dark:text-emerald-300 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border-t border-slate-100 dark:border-white/5"
                 >
-                  <MonitorPlay className="w-4 h-4" />
-                  Fliperama Embutido
+                  <div className="flex items-center gap-3">
+                    <Gamepad2 className="w-4 h-4" />
+                    Fliperama Widicom
+                  </div>
+                  <span className="text-[0.6rem] bg-emerald-500/20 text-emerald-500 px-1.5 py-0.5 rounded-md border border-emerald-500/20 font-black tracking-tighter animate-pulse">NEW</span>
                 </button>
               </div>
             )}
